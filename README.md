@@ -1,7 +1,7 @@
 <p>
     <img alt="Rolls-Royce Logo" width="100" src="https://raw.githubusercontent.com/rropen/MEC/main/src/frontend/public/logo4.png">
     <br>
-    Project to separate the _Team Creation_ functionality from [absence-planner](https://github.com/rropen/absense-planner).
+    Project to separate the <i>Team Creation</i> functionality from <a href="https://github.com/rropen/absense-planner" >absence-planner</a>.
 </p>
 <p>
 <a href="https://ubiquitous-chainsaw-e069ab7b.pages.github.io/"><img src="https://img.shields.io/badge/Rolls--Royce-Software%20Factory-10069f"></a>
