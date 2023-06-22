@@ -1,0 +1,31 @@
+ProjectDetails:
+  projectName: |
+
+  executiveSummary: |
+
+  projectDescription: |
+
+  problemStatement: |
+
+  replacedTools: |
+
+  businessImpact: |
+
+Locations:
+  developmentEnvironment:
+  sourceCodeLocation:
+  sourceCodeLink:
+Architecture:
+Classifications:
+  exportControlDetailsForCode:
+People: # This section is optional
+  requester:
+  sponsor:
+  businessTeamMembers:
+    -
+  devLead:
+  devTeamMembers:
+    -
+Timing: # This section is optional
+  ideaDate:
+Misc: # This section is optional
