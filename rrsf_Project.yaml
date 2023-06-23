@@ -1,0 +1,30 @@
+ProjectDetails:
+  projectName: |
+    Team App
+  executiveSummary: |
+    The Team App will serve as a centralised, abitrary team creation app which provides team structures, members and permissions via API for other apps to consume.
+  projectDescription: |
+    This application supports creating flexible 'teams' with the intention of the data being used by other applications such as newsletter subscriptions, absence planning, knowledge share groups etc.
+  problemStatement: |
+    The current and upcoming applications within the team will require a 'team' concept in some capacity. Rather than build, maintain and update the same functionality across a series of web applications - instead, this tool will provide the required team functionality to be used by other applications.
+  replacedTools: |
+    Absence Planner
+  businessImpact: |
+    The tool will save repeated development and maintenance across a series of web applications.
+Locations:
+  developmentEnvironment:
+  developmentEnvironmentLink:
+  productionEnvironment:
+  productionEnvironmentLink:
+  sourceCodeLocation: GitHub
+  sourceCodeLink: https://github.com/rropen/team-app
+  dataLocation: The data for this application will reside in a local database during development until matured and migrated to R-R infrastructure.
+  documentationLocation: README.md
+  documentationLink: https://github.com/rropen/team-app/README.md
+Architecture:
+  architectureOverview: |
+    This project follows a standard Django development structure.
+  fileDescribingArchitecture:
+  fileDescribingDataSchema: 
+BusinessDataClassification:
+  exportControlDetails: This application will not contain export controlled data.
