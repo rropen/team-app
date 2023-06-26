@@ -64,6 +64,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'teams_site.context_processors.info'
             ],
         },
     },
@@ -129,3 +130,5 @@ STATIC_ROOT = BASE_DIR / "static_root"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 PRODUCTION_UI = True
+NAME = "Team App"
+VERSION = "v0.01"

@@ -1,38 +1,48 @@
 {% load bulma_tags %}
 {% load static %}
+{% load define_action %}
 {% block content %}
-    {% if PRODUCTION_UI == True %} 
-        <section class="hero rr-primary">
-            <div class="hero-body ">
-                <p class="title rr-primary">Team App</p>
-                <p class="subtitle rr-white">v0.01</p>
-            </div>
-        </section>
+    {% get_primary PRODUCTION_UI as primary %}
+    {% get_secondary PRODUCTION_UI as secondary %}
 
-        <nav class="navbar rr-secondary">
-        <div class="navbar-brand">
-            <div class="navbar-burger burger rr-white" data-target="navbarExampleTransparentExample">
-                <span></span>
-                <span></span>
-                <span></span>
+    <section class="hero {{primary}}">
+        <div class="hero-body ">
+            <p class="title {{primary}}">{{ NAME }}</p>
+            <p class="subtitle rr-white">{{ VERSION }}</p>
+        </div>
+    </section>
+
+    <nav class="navbar {{secondary}}">
+        <div class="navbar-menu">
+            <div class="navbar-start pl-6">
+                {% if user.is_authenticated %}
+                {% else %}
+                    <a class="navbar-item icon-text" href="/">
+                        <span class="icon is-size-5">
+                            <i class="fas fa-home"></i>
+                        </span>
+                        <span>Home</span>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="field is-grouped">
+                        <div class="buttons">
+                            {% if user.is_authenticated %}
+                                <a id="profile" href="/profile/" class="button is-info">{{request.user.username}}
+                                    <i class="fas fa-user-circle ml-2 is-size-5"></i>
+                                </a>
+                                <a id="logout" href="#logout" class="button is-light">Log out</a>
+                            {% else %}
+                                <a id="signup" href="#signup" class="button is-info"><strong>Sign up</strong></a>
+                                <a id="login" href="#login" class="button is-light">Log in</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        
-    {% else %}
-        <section class="hero rr-dev-primary">
-            <div class="hero-body ">
-                <p class="title rr-dev-primary">Team App</p>
-                <p class="subtitle rr-white">v0.01</p>
-            </div>
-        </section>
+    </nav>
 
-        <nav class="navbar rr-dev-secondary">
-        <div class="navbar-brand">
-            <div class="navbar-burger burger rr-white" data-target="navbarExampleTransparentExample">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    {% endif %}
 {% endblock %}
