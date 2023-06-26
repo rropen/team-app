@@ -1,0 +1,38 @@
+{% load bulma_tags %}
+{% load static %}
+{% block content %}
+    {% if PRODUCTION_UI == True %} 
+        <section class="hero rr-primary">
+            <div class="hero-body ">
+                <p class="title rr-primary">Team App</p>
+                <p class="subtitle rr-white">v0.01</p>
+            </div>
+        </section>
+
+        <nav class="navbar rr-secondary">
+        <div class="navbar-brand">
+            <div class="navbar-burger burger rr-white" data-target="navbarExampleTransparentExample">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        
+    {% else %}
+        <section class="hero rr-dev-primary">
+            <div class="hero-body ">
+                <p class="title rr-dev-primary">Team App</p>
+                <p class="subtitle rr-white">v0.01</p>
+            </div>
+        </section>
+
+        <nav class="navbar rr-dev-secondary">
+        <div class="navbar-brand">
+            <div class="navbar-burger burger rr-white" data-target="navbarExampleTransparentExample">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
