@@ -22,6 +22,10 @@ urlpatterns = [
     path('', views.home_page_view, name="home_page"),
     path('login', views.login_page_view, name="login_page"),
     path('signup', views.signup_page_view, name="register"),
+    path('team_viewer', views.team_viewer_view, name="team_viewer"),
+    path('team_management', views.team_management_view, name="team_management"),
+    path('create_team', views.create_team_view, name="create_team"),
+    path('documentation', views.documentation_view, name="documentation"),
     path("accounts/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
 ]
