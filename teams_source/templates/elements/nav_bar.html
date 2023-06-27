@@ -16,8 +16,47 @@
         <div class="navbar-menu">
             <div class="navbar-start pl-6">
                 {% if user.is_authenticated %}
-                {% else %}
+                    {% if home_active %}
+                    <a class="navbar-item icon-text active" href="/">
+                    {% else %}
                     <a class="navbar-item icon-text" href="/">
+                    {% endif %}
+                        <span class="icon is-size-5">
+                            <i class="fas fa-home"></i>
+                        </span>
+                        <span>Home</span>
+                    </a>
+
+                    <a class="navbar-item icon-text" href="#view_teams">
+                        <span class="icon is-size-5">
+                            <i class="fas fa-users"></i>
+                        </span>
+                        <span>Teams Viewer</span>
+                    </a>
+
+                    <a class="navbar-item icon-text" href="#documentation">
+                        <span class="icon is-size-5">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Create Team</span>
+                    </a>
+
+                    <a class="navbar-item icon-text" href="#manage_teams">
+                        <span class="icon is-size-5">
+                            <i class="fas fa-users-cog"></i>
+                        </span>
+                        <span>Manage Teams</span>
+                    </a>
+
+                    <a class="navbar-item icon-text" href="#documentation">
+                        <span class="icon is-size-5">
+                            <i class="fas fa-file-alt"></i>
+                        </span>
+                        <span>Documentation</span>
+                    </a>
+
+                {% else %}
+                    <a class="navbar-item icon-text active" href="/">
                         <span class="icon is-size-5">
                             <i class="fas fa-home"></i>
                         </span>
@@ -30,13 +69,13 @@
                     <div class="field is-grouped">
                         <div class="buttons">
                             {% if user.is_authenticated %}
-                                <a id="profile" href="/profile/" class="button is-info">{{request.user.username}}
+                                <a id="profile" href="#profile" class="button is-info">{{request.user.username}}
                                     <i class="fas fa-user-circle ml-2 is-size-5"></i>
                                 </a>
-                                <a id="logout" href="#logout" class="button is-light">Log out</a>
+                                <a id="logout" href="{% url 'logout' %}" class="button is-light">Log out</a>
                             {% else %}
-                                <a id="signup" href="#signup" class="button is-info"><strong>Sign up</strong></a>
-                                <a id="login" href="#login" class="button is-light">Log in</a>
+                                <a id="signup" href="/signup" class="button is-info"><strong>Sign up</strong></a>
+                                <a id="login" href="/login" class="button is-light">Log in</a>
                             {% endif %}
                         </div>
                     </div>

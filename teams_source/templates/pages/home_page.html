@@ -4,5 +4,9 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    <p>You are not logged in.</p>
+    {% if user.is_authenticated %}
+        <p>You have successfully logged in.</p>
+    {% else %}
+        <p>You are not logged in.</p>
+    {% endif %}
 {% endblock %}
