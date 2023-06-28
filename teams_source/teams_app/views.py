@@ -48,16 +48,35 @@ def team_viewer_view(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
-        rel = Relationship.objects.filter(user=request.user, team_id=data["team_id"])
-        rel.delete()
+        if data["type"] == "remove":
+            rel = Relationship.objects.filter(user=request.user, team_id=data["team_id"])
+            rel.delete()
+        elif data["type"] == "add":
+            rel = Relationship.objects.create(
+                user=request.user,
+                team=Team.objects.get(id=data["team_id"]),
+                role=Role.objects.get(role="Member")
+            )
+            rel.save()
 
     relationships = Relationship.objects.order_by(Lower("role__id")).filter(user=request.user)
+    all_teams = Team.objects.all().order_by(Lower("name")).exclude(relationship__user=request.user.id)
     teams_data = {
         "relationships": relationships,
-        "teams_amount": len(relationships)
+        "teams_amount": len(relationships),
+        "public_teams": all_teams,
+        "public_team_amount": len(all_teams)
     }
 
     return render(request, "pages/teams/team_viewer.html", {"viewer_active": True, **teams_data})
+
+@login_required
+def focus_team_view(request, team_id):
+    try:
+        team = Team.objects.get(id=team_id)
+    except:
+        return redirect("/team_viewer")
+    return render(request, "pages/teams/focus_team.html", {"team": team})
 
 #JC - Team management page
 @login_required
