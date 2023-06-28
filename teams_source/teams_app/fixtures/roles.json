@@ -1,0 +1,30 @@
+[
+    {
+      "model": "teams_app.role",
+      "pk": 1,
+      "fields": {
+        "role": "Owner"
+      }
+    },
+    {
+        "model": "teams_app.role",
+        "pk": 2,
+        "fields": {
+          "role": "Co-Owner"
+        }
+    },
+    {
+        "model": "teams_app.role",
+        "pk": 3,
+        "fields": {
+          "role": "Member"
+        }
+    },
+    {
+        "model": "teams_app.role",
+        "pk": 4,
+        "fields": {
+          "role": "Follower"
+        }
+    }
+]
