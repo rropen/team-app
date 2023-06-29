@@ -1,0 +1,30 @@
+[
+    {
+        "model": "teams_app.status",
+        "pk": 1,
+        "fields": {
+            "status": "Active"
+        }
+    },
+    {
+        "model": "teams_app.status",
+        "pk": 2,
+        "fields": {
+            "status": "Pending"
+        }
+    },
+    {
+        "model": "teams_app.status",
+        "pk": 3,
+        "fields": {
+            "status": "Non-Active"
+        }
+    },
+    {
+        "model": "teams_app.status",
+        "pk": 4,
+        "fields": {
+            "status": "Invited"
+        }
+    }
+]

@@ -18,7 +18,7 @@ class Team(models.Model):
 
     @property
     def count(self):
-        return Relationship.objects.filter(team=self).count()
+        return Relationship.objects.filter(team=self, status=1).count()
 
 #JC - Role model
 class Role(models.Model):
@@ -29,6 +29,15 @@ class Role(models.Model):
     def __str__(self):
         return f"{self.role}"
 
+#JC - Status model
+class Status(models.Model):
+
+    id = models.AutoField(primary_key=True)
+    status = models.CharField(max_length=65, null=False, unique=True)
+
+    def __str__(self):
+        return f"{self.status}"
+
 #JC - Relationship model which links the user to their team and role
 class Relationship(models.Model):
 
@@ -36,7 +45,7 @@ class Relationship(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    #status = StateField(on_delete=models.CASCADE)
+    status = models.ForeignKey(Status, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = (

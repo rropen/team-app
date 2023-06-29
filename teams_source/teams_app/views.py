@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.db.models.functions import Lower
 from .forms import LoginForm, RegisterForm, CreateTeamForm
-from .models import Team, Role, Relationship, UserProfile
+from .models import Team, Role, Relationship, Status, UserProfile
 import holidays, pycountry
-
 import json
 
 #JC - Home page view
@@ -49,35 +49,93 @@ def team_viewer_view(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
+        #JC - Leave a team
         if data["type"] == "remove":
             rel = Relationship.objects.filter(user=request.user, team_id=data["team_id"])
             rel.delete()
+        #JC - Join a team
         elif data["type"] == "add":
             rel = Relationship.objects.create(
                 user=request.user,
                 team=Team.objects.get(id=data["team_id"]),
-                role=Role.objects.get(role="Member")
+                role=Role.objects.get(role="Member"),
+                status=Status.objects.get(id=1)
             )
             rel.save()
+        elif data["type"] == "accept":
+            rel = Relationship.objects.filter(user=request.user, team_id=data["team_id"])[0]
+            rel.status = Status.objects.get(id=1)
+            rel.save()
+        elif data["type"] == "decline":
+            rel = Relationship.objects.filter(user=request.user, team_id=data["team_id"])
+            rel.delete()
 
-    relationships = Relationship.objects.order_by(Lower("role__id")).filter(user=request.user)
-    all_teams = Team.objects.all().order_by(Lower("name")).exclude(relationship__user=request.user.id)
+    relationships = Relationship.objects.order_by(Lower("role__id")).filter(user=request.user, status=1)
+    all_teams = Team.objects.all().order_by(Lower("name")).exclude(relationship__user=request.user.id).exclude(private=True)
+    invite_list = Relationship.objects.filter(status=2)
     teams_data = {
         "relationships": relationships,
         "teams_amount": len(relationships),
         "public_teams": all_teams,
-        "public_team_amount": len(all_teams)
+        "public_team_amount": len(all_teams),
+        "invite_list": invite_list,
+        "invite_amount": len(invite_list)
     }
 
     return render(request, "pages/teams/team_viewer.html", {"viewer_active": True, **teams_data})
 
+#JC - The view for the individual team view
 @login_required
 def focus_team_view(request, team_id):
+
+    #JC - This will redirect them if they don't have permission to view the team
+    if Team.objects.filter(id=team_id)[0].private:
+        if not Relationship.objects.filter(user=request.user, team_id=team_id, status=1).exists():
+            return redirect("/team_viewer")
+
+    #JC - This recives the data from the web page
+    messages = []
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+        except:
+            data = None
+        if data != None:
+            if data["type"] == "remove":
+                rel = Relationship.objects.filter(user_id=data["user_id"], team_id=team_id)
+                rel.delete()
+        else:
+            if request.POST.get("user"):
+                user = User.objects.filter(username=request.POST.get("user"))
+                if user.exists():
+                    rel = Relationship.objects.create(
+                        user=user[0],
+                        team=Team.objects.get(id=team_id),
+                        role=Role.objects.get(role=request.POST.get("role")),
+                        status=Status.objects.get(id=2)
+                    )
+                    rel.save()
+                else:
+                    messages.append("Username not found.")
+            else:
+                messages.append("A username is required.")
+
     try:
         team = Team.objects.get(id=team_id)
     except:
         return redirect("/team_viewer")
-    return render(request, "pages/teams/focus_team.html", {"team": team})
+    
+    member_list = Relationship.objects.filter(team=team, status=1)
+    role_list = Role.objects.all()
+    user_permission = False
+    if Relationship.objects.filter(team=team_id, status=1, role=1, user=request.user).exists():
+        user_permission = True
+    elif Relationship.objects.filter(team=team_id, status=1, role=2, user=request.user).exists():
+        user_permission = True
+    
+    user_role_id = Relationship.objects.filter(user=request.user, status=1, team_id=team_id)[0].role.id
+    return render(request, "pages/teams/focus_team.html", {"team": team, "team_members": member_list, "roles": role_list, 
+                                                           "user_permission": user_permission, "role_id": user_role_id, "team_id": team_id, "messages": messages})
 
 #JC - Team management page
 @login_required
@@ -92,12 +150,11 @@ def create_team_view(request):
         if form.is_valid():
             form.save()
             #JC - Creates relationship between user and team
-            created_team = Team.objects.get(name=form.cleaned_data["name"])
-            assign_role = Role.objects.get(role="Owner")
             Relationship.objects.create(
                 user = request.user,
-                team = created_team,
-                role = assign_role
+                team = Team.objects.get(name=form.cleaned_data["name"]),
+                role = Role.objects.get(role="Owner"),
+                status = Status.objects.get(id=1)
             )
             return redirect("/")
     else:

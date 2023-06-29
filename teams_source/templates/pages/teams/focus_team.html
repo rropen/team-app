@@ -4,5 +4,108 @@
 {% block title %}Team{% endblock %}
 
 {% block content %}
-<h1>{{ team.name }}</h1>
+<section class="hero">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    <h1 class="title">{{ team.name }}</h1>
+                    <h2 class="subtitle is-5">{{ team.description }}</h2>
+                    <div class="has-background-light box">
+                        <div class="is-size-5 mb-3">
+                            <span class="is-block is-size-5 has-text-weight-bold">
+                                <i class="fas fa-users"></i>
+                                Members
+                            </span>
+                            {% for role in roles %}
+                            <span class="is-block is-size-6 has-text-weight-bold">{{ role }}s</span>
+                            <div class="field is-grouped is-grouped-multiline">
+                                {% for member in team_members %}
+                                    {% if member.role == role %}
+                                        {% if member.role.id == 1 %}
+                                        <span class="tag is-dark">
+                                        {% elif member.role.id == 2 %}
+                                        <span class="tag is-link">
+                                        {% elif member.role.id == 3 %}
+                                        <span class="tag is-info">
+                                        {% else %}
+                                        <span class="tag is-primary">
+                                        {% endif %}
+                                            {{ member.user.username }}
+                                            {% if user_permission and member.user.username != user.username%}
+                                            <button class="delete is-small" id="{{ member.user.id }}" onclick="sendData(this, 'remove', '{{ csrf_token }}')"></button>
+                                            {% endif %}
+                                        </span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% if team.private %}
+                    <div class="has-background-light box">
+                        <div class="is-size-5 mb-3">
+                            <span class="is-block is-size-5 has-text-weight-bold">
+                                <i class="fas fa-user-plus"></i>
+                                Invite User
+                            </span>
+                        </div>
+                        <form method="POST" action="/team/{{ team_id }}">
+                            {% csrf_token %}
+                            <div class="level">
+                                <div class="level-left">
+                                    <div class="level-item">
+                                        <div class="field">
+                                            <div class="control has-icons-left">
+                                                <input class="input" type="text" name="user">
+                                                <span class="icon is-small is-left">
+                                                    <i class="fas fa-user"></i>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="level-item">
+                                        <div class="field">
+                                            <div class="select">
+                                                <select name="role">
+                                                    {% for role in roles %}
+                                                        {% if role.id > role_id %}
+                                                        <option>{{ role }}</option>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="level-right">
+                                    <div class="field">
+                                        <button class="button is-info" type="submit">Invite</button>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if messages %}
+                            <ul>
+                                {% for m in messages %}
+                                <li><span style="color: red;">{{ m }}</span></li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </form>
+                    </div>
+                    {% endif %}
+                    <div class="has-background-light box">
+                        <div class="is-size-5 mb-3">
+                            <span class="is-block is-size-5 has-text-weight-bold">
+                                <i class="fas fa-cog"></i>
+                                Team Management
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="{% static "js/focus_team.js" %}"></script>
 {% endblock %}
