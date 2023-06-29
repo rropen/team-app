@@ -46,3 +46,13 @@ class Relationship(models.Model):
 
     def __str__(self):
         return f"User: {self.user.username}({self.user.id}) -> {self.team.name}({self.team.id}) as {self.role}"
+    
+class UserProfile(models.Model):
+        user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+        accepted_policy = models.BooleanField()
+
+        region = models.CharField(max_length=60, default="GB")
+
+        def __str__(self):
+            return f'{self.user.username}'

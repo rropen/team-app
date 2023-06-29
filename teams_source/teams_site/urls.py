@@ -27,6 +27,7 @@ urlpatterns = [
     path('create_team', views.create_team_view, name="create_team"),
     path('documentation', views.documentation_view, name="documentation"),
     path('team/<int:team_id>', views.focus_team_view, name="focus_team"),
+    path('profile', views.profile, name="profile"),
     path("accounts/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
 ]
