@@ -23,5 +23,14 @@ class RelationshipViewSet(viewsets.ModelViewSet):
     serializer_class = RelationshipSerializer
 
     def get_queryset(self):
-        username = self.request.query_params.get("username")
-        return Relationship.objects.filter(user__username=username).all()
+        return Relationship.objects.none()
+    
+    def list(self, request):
+        username = request.query_params.get("username")
+        teams = {}
+        for i in Relationship.objects.filter(user__username=username).all():
+            teams[i.team.id] = {
+                "name": i.team.name,
+                "description": i.team.description
+            }
+        return JsonResponse({"results": teams})
