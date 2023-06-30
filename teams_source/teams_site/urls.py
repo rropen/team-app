@@ -17,7 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 import teams_app.views as views
-from teams_app.api_router import api_router
+from teams_app.api_router import router
 
 urlpatterns = [
     path('', views.home_page_view, name="home_page"),
@@ -31,6 +31,5 @@ urlpatterns = [
     path('profile', views.profile, name="profile"),
     path("accounts/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
-    path("api/", include(api_router.urls)),
-    re_path(r"^users_teams/(?P<username>)$", include(api_router.urls))
+    path("api/", include(router.urls)),
 ]

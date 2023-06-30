@@ -5,6 +5,7 @@ from .serializers import TeamSerializer, RelationshipSerializer
 from urllib.parse import unquote
 from rest_framework.response import Response
 from django.http import JsonResponse
+from rest_framework import generics
 
 
 class TeamViewSet(viewsets.ModelViewSet):
@@ -19,36 +20,8 @@ class TeamViewSet(viewsets.ModelViewSet):
         return queryset
     
 class RelationshipViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
     serializer_class = RelationshipSerializer
-    #permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        username = self.kwargs["username"]
-        return Relationship.objects.filter(team__username=username).values()
-    
-    """def list(self, request):
-        user_name = unquote(request.GET['user_name'])
-
-        results = Relationship.objects.filter(self.request.user).all()
-
-        print(results)
-
-        return JsonResponse({"results": list(results)})"""
-    
-class MemberViewSet(viewsets.ModelViewSet):
-
-    serializer_class = TeamSerializer
-
-    def list(self, request):
-
-        search_string = unquote(request.GET['search_string'])
-
-        results = Relationship.objects.filter(team__name=search_string)
-
-        return Response(results)
-
-    def get_queryset(self):
-        queryset = Relationship.objects.none()
+        username = self.request.query_params.get("username")
+        return Relationship.objects.filter(user__username=username).all()
