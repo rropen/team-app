@@ -104,21 +104,44 @@ def focus_team_view(request, team_id):
             if data["type"] == "remove":
                 rel = Relationship.objects.filter(user_id=data["user_id"], team_id=team_id)
                 rel.delete()
+            elif data["type"] == "delete_team":
+                print("Deleting team")
+                Team.objects.get(id=team_id).delete()
+                return redirect("/team_viewer")
         else:
-            if request.POST.get("user"):
-                user = User.objects.filter(username=request.POST.get("user"))
-                if user.exists():
-                    rel = Relationship.objects.create(
-                        user=user[0],
-                        team=Team.objects.get(id=team_id),
-                        role=Role.objects.get(role=request.POST.get("role")),
-                        status=Status.objects.get(id=2)
-                    )
-                    rel.save()
+            if "name" in request.POST and "description" in request.POST:
+                team_edit_form = CreateTeamForm(request.POST)
+                current_team = Team.objects.get(id=team_id)
+                current_team.name = team_edit_form.data["name"]
+                current_team.description = team_edit_form.data["description"]
+                if team_edit_form.data["private"] == "on":
+                    current_team.private = True
                 else:
-                    messages.append("Username not found.")
-            else:
-                messages.append("A username is required.")
+                    current_team.private = False
+                current_team.save()
+            elif "user" in request.POST and "role" in request.POST:
+                if request.POST.get("user"):
+                    user = User.objects.filter(username=request.POST.get("user"))
+                    if user.exists():
+                        rel = Relationship.objects.create(
+                            user=user[0],
+                            team=Team.objects.get(id=team_id),
+                            role=Role.objects.get(role=request.POST.get("role")),
+                            status=Status.objects.get(id=2)
+                        )
+                        rel.save()
+                    else:
+                        messages.append("Username not found.")
+                else:
+                    messages.append("A username is required.")
+    
+    team_form_data = {
+        "name": Team.objects.get(id=team_id).name,
+        "description": Team.objects.get(id=team_id).description,
+        "private": Team.objects.get(id=team_id).private
+    }
+    
+    team_edit_form = CreateTeamForm(team_form_data)
 
     try:
         team = Team.objects.get(id=team_id)
@@ -133,9 +156,13 @@ def focus_team_view(request, team_id):
     elif Relationship.objects.filter(team=team_id, status=1, role=2, user=request.user).exists():
         user_permission = True
     
-    user_role_id = Relationship.objects.filter(user=request.user, status=1, team_id=team_id)[0].role.id
+    if Relationship.objects.filter(user=request.user, status=1, team_id=team_id).exists():
+        user_role_id = Relationship.objects.filter(user=request.user, status=1, team_id=team_id)[0].role.id
+    else:
+        user_role_id = 10
+
     return render(request, "pages/teams/focus_team.html", {"team": team, "team_members": member_list, "roles": role_list, 
-                                                           "user_permission": user_permission, "role_id": user_role_id, "team_id": team_id, "messages": messages})
+                    "user_permission": user_permission, "role_id": user_role_id, "team_id": team_id, "messages": messages, "edit_form": team_edit_form})
 
 #JC - Team management page
 @login_required
@@ -206,4 +233,4 @@ def profile(request):
     
     countries = sorted(countries)
 
-    return render(request, "pages/profile.html", {"countries":countries})
+    return render(request, "pages/profile.html", {"countries": countries})
