@@ -195,9 +195,9 @@ def documentation_view(request):
 
 def profile(request):
 
-    userprofile: UserProfile = UserProfile.objects.filter(user=request.user)
+    userprofile: UserProfile = UserProfile.objects.get(user=request.user)
 
-    if not userprofile.exists():
+    if not userprofile:
         userprofile = UserProfile.objects.create(
             user=request.user,
             accepted_policy=True,
@@ -220,8 +220,11 @@ def profile(request):
         region = request.POST.get("region")
         region_code = pycountry.countries.get(name=region).alpha_2
 
-        if region_code != userprofile[0].region:
-            userprofile[0].region = region_code
+        
+
+        if region_code != userprofile.region:
+            userprofile.region = region_code
+            userprofile.save()
 
     countries = []
     for country in list(pycountry.countries):
@@ -233,4 +236,7 @@ def profile(request):
     
     countries = sorted(countries)
 
-    return render(request, "pages/profile.html", {"countries": countries})
+    country_name = pycountry.countries.get(alpha_2=userprofile.region).name
+
+    context = {"countries":countries, "current_country":country_name}
+    return render(request, "pages/profile.html", context)
