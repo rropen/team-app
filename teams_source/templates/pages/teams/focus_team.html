@@ -4,8 +4,26 @@
 {% block title %}Team{% endblock %}
 
 {% block content %}
+<script src="{% static "js/focus_team.js" %}"></script>
 <section class="hero">
     <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-one-quarter">
+                    <article class="message is-danger" style="display: none; position: fixed; z-index: 5;" id="deleteTeamConfirmation">
+                        <div class="message-header">
+                            <p>Team Deletion</p>
+                            <button class="delete" aria-label="delete" id="deleteTeamClose" onclick="closeDeletionMenu()"></button>
+                        </div>
+                        <div class="message-body" style="text-align: center;">
+                            <p>Delete the team?</p>
+                            <button class="button is-danger" id="deleteTeam" onclick="deleteTeam('{{ csrf_token }}')">Confirm Delete</button>
+                            <button class="button is-danger" id="cancelDelete" onclick="closeDeletionMenu()">Cancel</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
         <div class="container">
             <div class="columns is-centered">
                 <div class="column is-three-quarters">
@@ -32,7 +50,7 @@
                                         <span class="tag is-primary">
                                         {% endif %}
                                             {{ member.user.username }}
-                                            {% if user_permission and member.user.username != user.username%}
+                                            {% if user_permission and member.role.id != 1 and member.role.id != 2 %}
                                             <button class="delete is-small" id="{{ member.user.id }}" onclick="sendData(this, 'remove', '{{ csrf_token }}')"></button>
                                             {% endif %}
                                         </span>
@@ -94,6 +112,7 @@
                         </form>
                     </div>
                     {% endif %}
+                    {% if user_permission %}
                     <div class="has-background-light box">
                         <div class="is-size-5 mb-3">
                             <span class="is-block is-size-5 has-text-weight-bold">
@@ -101,11 +120,40 @@
                                 Team Management
                             </span>
                         </div>
+                        <form method="POST" action="/team/{{ team_id }}">
+                            {% csrf_token %}
+                            {% for field in edit_form %}
+                            <div class="field">
+                                <label class="label" for="{{ field.id_for_label}}">{{ field.label_tag }}</label>
+                                {% if field.name == "name" %}
+                                    <input class="input" type="{{ field.field.widget.input_type }}" name="{{ field.name }}" required id="{{ field.id_for_label }}" value="{{ field.value }}">
+                                {% elif field.name == "description" %}
+                                    <textarea class="textarea" name="{{ field.name }}" id="{{ field.id_for_label }}">{{ field.value }}</textarea>
+                                {% else %}
+                                <label class="checkbox">
+                                    {% if field.value %}
+                                    <input type="checkbox" name="{{ field.name }}" id="{{ field.id_for_label }}" checked>
+                                    {% else %}
+                                    <input type="checkbox" name="{{ field.name }}" id="{{ field.id_for_label }}">
+                                    {% endif %}
+                                    Private team
+                                </label>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            <div class="field">
+                                <button class="button is-info">Edit team</button>
+                            </div>
+                        </form>
+                        <div class="pt-4">
+                            <label class="label">Danger Zone:</label>
+                            <button class="button is-danger" onclick="removeTeamButton()">Delete Team</button>
+                        </div>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </section>
-<script src="{% static "js/focus_team.js" %}"></script>
 {% endblock %}

@@ -4,68 +4,75 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-<form method="POST" action="profile" class="box">
-    {% csrf_token %}
-    <div class="columns is-centered">
-        <div class="column is-one-third">
-            <div class="field">
-                <label class="label">First Name</label>
-                <div class ="control">
-                    {% if user.first_name %}
-                    <input class="input is-rounded is-success" type="text" placeholder="First Name" value="{{ user.first_name }}" name="firstName">
-                    {% else %}
-                    <input class="input is-rounded is-warning" type="text" placeholder="First Name" name="firstName">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="field">
-                <label class="label">Last Name</label>
-                <div class ="control">
-                    {% if user.last_name %}
-                    <input class="input is-rounded is-success" type="text" placeholder="Last Name" value="{{ user.last_name }}" name="lastName">
-                    {% else %}
-                    <input class="input is-rounded is-warning" type="text" placeholder="Last Name" name="lastName">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="field">
-                <label class="label">Email</label>
-                <div class="control has-icons-right">
-                    {% if user.email %}
-                    <input class="input is-rounded is-success" type="email" placeholder="Email Address" name="email" id="email-input" value="{{ user.email }}">
-                    <span class="icon is-small is-right">
-                        <button class="delete" aria-label="delete" onclick="deleteInputtedValue('email-input')"></button>
-                    </span>
-                    {% else %}
-                    <input class="input is-rounded is-warning" type="email" placeholder="Email Address" name="email">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="field">
-                <label class="label">Region</label>
-                <div class="control">
-                    <div class="select is-rounded">
-                        <select name="region">
-                            {% for country in countries %}
-                                {% if country == current_country %}
-                                    <option value="{{country}}" selected="selected">{{country}}</option>
-                                {% else %}
-                                    <option value="{{country}}">{{country}}</option>
-                                {% endif %}
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="field is-grouped my-4">
-                <div class="control">
-                    <button class="button is-link" type="submit">Submit</button>
-                </div>
-                <div class="control">
-                    <button class="button is-link">Cancel</button>
+<section class="hero">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <form method="POST" action="profile" class="box">
+                        {% csrf_token %}
+                            <div class="field">
+                                <label class="label">First Name</label>
+                                <div class ="control">
+                                    {% if user.first_name %}
+                                    <input class="input is-rounded is-success" type="text" placeholder="First Name" value="{{ user.first_name }}" name="firstName">
+                                    {% else %}
+                                    <input class="input is-rounded is-warning" type="text" placeholder="First Name" name="firstName">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Last Name</label>
+                                <div class ="control">
+                                    {% if user.last_name %}
+                                    <input class="input is-rounded is-success" type="text" placeholder="Last Name" value="{{ user.last_name }}" name="lastName">
+                                    {% else %}
+                                    <input class="input is-rounded is-warning" type="text" placeholder="Last Name" name="lastName">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control has-icons-right">
+                                    {% if user.email %}
+                                    <input class="input is-rounded is-success" type="email" placeholder="Email Address" name="email" id="email-input" value="{{ user.email }}">
+                                    <span class="icon is-small is-right">
+                                        <button class="delete" aria-label="delete" onclick="deleteInputtedValue('email-input')"></button>
+                                    </span>
+                                    {% else %}
+                                    <input class="input is-rounded is-warning" type="email" placeholder="Email Address" name="email">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="label">Region</label>
+                                <div class="control">
+                                    <div class="select is-rounded">
+                                        <select name="region">
+                                            {% for country in countries %}
+                                                {% if country == current_country %}
+                                                    <option value="{{country}}" selected="selected">{{country}}</option>
+                                                {% else %}
+                                                    <option value="{{country}}">{{country}}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field is-grouped my-4">
+                                <div class="control">
+                                    <button class="button is-link" type="submit">Submit</button>
+                                </div>
+                                <div class="control">
+                                    <button class="button is-link">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-</form>
+</section>
 {% endblock %}

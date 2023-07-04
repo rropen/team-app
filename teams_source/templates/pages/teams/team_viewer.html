@@ -77,7 +77,7 @@
                                     <span class="is-block is-size-6">{{rel.team.description}}</span>
                                     <div class="is-grouped">
                                         <button class="button is-link" id="{{rel.team.id}}" onclick="openTeamPage(this)">View</button>
-                                        <button class="button is-link" id="{{rel.team.id}}" onclick="sendData(this, 'remove', '{{ csrf_token }}')">Leave</button>
+                                        <button class="button is-danger" id="{{rel.team.id}}" onclick="sendData(this, 'remove', '{{ csrf_token }}')">Leave</button>
                                     </div>
                                 </diV>
                                 {% endfor %}
