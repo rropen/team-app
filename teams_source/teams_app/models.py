@@ -1,8 +1,5 @@
 from django.db import models
-from django.contrib.auth import get_user_model
-
-#JC - Main user variable
-User = get_user_model()
+from django.contrib.auth.models import User
 
 #JC - Teams model
 class Team(models.Model):
@@ -19,6 +16,10 @@ class Team(models.Model):
     @property
     def count(self):
         return Relationship.objects.filter(team=self, status=1).count()
+    
+    @property
+    def members(self):
+        return Relationship.objects.filter(team=self, status=1).all()
 
 #JC - Role model
 class Role(models.Model):

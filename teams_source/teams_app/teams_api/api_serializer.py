@@ -25,3 +25,15 @@ class UsersTeamsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relationship
         fields = ["team", "role"]
+
+class TeamMemberSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    class Meta:
+        model = Relationship
+        fields = ["user"]
+
+class AdditionalTeam(serializers.ModelSerializer):
+    members = TeamMemberSerializer(many=True)
+    class Meta:
+        model = Team
+        fields = ["id", "name", "description", "private", "members"]

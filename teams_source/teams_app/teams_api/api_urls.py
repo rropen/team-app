@@ -6,8 +6,10 @@ router = routers.DefaultRouter()
 
 #JC - Register api links
 router.register(r'teams', UserTeamViewSet, basename="teams")
+router.register(r'members', MembersTeamViewSet, basename="members")
 
 urlpatterns = [
     path('', include(router.urls)),
-    re_path('^teams/(?P<username>.+)/$', UserTeamViewSet)
+    re_path('^teams/(?P<username>.+)/$', UserTeamViewSet),
+    re_path('^members/(?P<team>.+)/$', MembersTeamViewSet)
 ]
