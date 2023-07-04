@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from teams_app.models import Relationship, Team, Role, UserProfile
+from teams_app.models import Relationship, Team, Role
 from django.contrib.auth.models import User
 
 #JC General Serializers which link to the models
@@ -10,7 +10,7 @@ class RoleSerializer(serializers.ModelSerializer):
         model = Role
         fields = "__all__"
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializerAddon(serializers.ModelSerializer):
     role_info = serializers.SerializerMethodField()
     class Meta:
         model = User
@@ -38,7 +38,7 @@ class UsersTeamsSerializer(serializers.ModelSerializer):
 
 #JC - Serializers for api/members
 class TeamMemberSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = UserSerializerAddon(read_only=True)
     class Meta:
         model = Relationship
         fields = ["user"]
