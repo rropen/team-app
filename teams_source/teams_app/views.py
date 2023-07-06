@@ -195,15 +195,17 @@ def documentation_view(request):
 
 def profile(request):
 
-    userprofile: UserProfile = UserProfile.objects.get(user=request.user)
+    userprofile: UserProfile = UserProfile.objects.filter(user=request.user)
 
-    if not userprofile:
+    if not userprofile.exists():
         userprofile = UserProfile.objects.create(
             user=request.user,
             accepted_policy=True,
             region="GB"
         )
         userprofile.save()
+    else:
+        userprofile: UserProfile = UserProfile.objects.get(user=request.user)
 
 
     if request.method=="POST" and len(request.POST) > 0:
