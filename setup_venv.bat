@@ -43,7 +43,6 @@ if EXIST teams_source/manage.py (
 	"venv\Scripts\python" teams_source/manage.py makemigrations
 
     ECHO Running migrations
-	"venv\Scripts\python" teams_source/manage.py migrate ap_app
 	"venv\Scripts\python" teams_source/manage.py migrate
 
     ECHO Loading fixtures
