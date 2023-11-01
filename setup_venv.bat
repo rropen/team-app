@@ -2,7 +2,7 @@
 
 SET PYTHON_EXECUTABLE=notfound
 @REM LOOP test
-FOR %%P IN ("python", "python3.8", "py") DO (
+FOR %%P IN ("python3.11", "python3.8", "py") DO (
 	%%~P --version
 	IF NOT ERRORLEVEL 1 (
 		SET PYTHON_EXECUTABLE=%%~P
