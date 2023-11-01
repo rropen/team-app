@@ -153,7 +153,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 PRODUCTION_UI = True
 NAME = "Team App"
-VERSION = "v0.01"
+VERSION = "v1.0.0"
 
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
