@@ -4,115 +4,129 @@
 {% block title %}Teams{% endblock %}
 
 {% block content %}
-    <section class="hero">
-        <div class="hero-body">
-            <div class="container">
-                <div class="columns is-centered">
-                    <div class="column is-three-quarters">
-                        {% if invite_list %}
-                        <div class="pb-5" id="invites">
-                            <h1 class="title is-3">Pending Invites ({{ invite_amount }})</h1>
-                            {% for invite in invite_list %}
-                            <article class="message is-success">
-                                <div class="message-header">
-                                    <p>Team Invite</p>
-                                </div>
-                                <div class="message-body">
-                                    <div class="level">
-                                        <div class="level-left">
-                                            <div class="level-item">
-                                                <p>You recieved an invite to <strong>{{ invite.team.name }}</strong>.
-                                                    <br>
-                                                    <em>{{ invite.team.description }}</em>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="level-right">
-                                            <div class="level-item">
-                                                <button class="button is-success" id="{{ invite.team.id }}" onclick="sendData(this, 'accept', '{{ csrf_token }}')">Accept</button>
-                                            </div>
-                                            <div class="level-item">
-                                                <button class="button is-success" id="{{ invite.team.id }}" onclick="sendData(this, 'decline', '{{ csrf_token }}')">Decline</button>
-                                            </div>
+<section class="hero">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-three-quarters">
+                    {% if invite_list %}
+                    <div class="pb-5" id="invites">
+                        <h1 class="title is-3">Pending Invites ({{ invite_amount }})</h1>
+                        {% for invite in invite_list %}
+                        <article class="message is-success">
+                            <div class="message-header">
+                                <p>Team Invite</p>
+                            </div>
+                            <div class="message-body">
+                                <div class="level">
+                                    <div class="level-left">
+                                        <div class="level-item">
+                                            <p>You recieved an invite to <strong>{{ invite.team.name }}</strong>.
+                                                <br>
+                                                <em>{{ invite.team.description }}</em>
+                                            </p>
                                         </div>
                                     </div>
-                                </div>
-                            </article>
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                        <div id="current_teams">
-                            <h1 class="title is-3">My Teams ({{ teams_amount }})</h1>
-                            {% if relationships %}
-                                {% for rel in relationships %}
-                                <div class="has-background-light box">
-                                    <div class="is-size-5 mb-3">
-                                        <span class="is-block is-size-5	has-text-weight-bold">
-                                            {{rel.team.name}}
-                                            <i class="fas fa-user-alt mx-2"></i>{{rel.team.count}}
-                                        </span>
-                                        {% if rel.team.private %}
-                                            <span class="tag is-info is-rounded">
-                                                <i class="fas fa-lock"></i>
-                                                &nbsp;Private
-                                            </span>
-                                        {% else %}
-                                            <span class="tag is-info is-rounded">
-                                                <i class="fas fa-unlock"></i>
-                                                &nbsp;Public
-                                            </span>
-                                        {% endif %}
-                                        {% if rel.role.role == "Owner" or rel.role.role == "Co-Owner" %}
-                                            <span class="tag is-dark is-rounded">
-                                                <i class="fas fa-user-edit"></i>
-                                                &nbsp;{{ rel.role.role }}
-                                            </span>
-                                        {% else %}
-                                            <span class="tag is-dark is-rounded">
-                                                <i class="fas fa-user"></i>
-                                                &nbsp;{{ rel.role.role }}
-                                            </span>
-                                        {% endif %}
+                                    <div class="level-right">
+                                        <div class="level-item">
+                                            <button class="button is-success" id="{{ invite.team.id }}" onclick="sendData(this, 'accept', '{{ csrf_token }}')">Accept</button>
+                                        </div>
+                                        <div class="level-item">
+                                            <button class="button is-success" id="{{ invite.team.id }}" onclick="sendData(this, 'decline', '{{ csrf_token }}')">Decline</button>
+                                        </div>
                                     </div>
-                                    <span class="is-block is-size-6">{{rel.team.description}}</span>
-                                    <div class="is-grouped">
-                                        <button class="button is-link" id="{{rel.team.id}}" onclick="openTeamPage(this)">View</button>
-                                        <button class="button is-danger" id="{{rel.team.id}}" onclick="sendData(this, 'remove', '{{ csrf_token }}')">Leave</button>
-                                    </div>
-                                </diV>
-                                {% endfor %}
-                            {% else %}
-                            <div class="has-background-light box">
-                                <div class="is-size-5 mb-3">
-                                    <span>No found teams.</span>
                                 </div>
                             </div>
-                            {% endif %}
-                        </div>
-                        <div class="pt-5" id="public_teams">
-                            <h1 class="title is-3">Public Teams ({{ public_team_amount }})</h1>
-                            {% if public_teams %}
-                                {% for team in public_teams %}
-                                <div class="has-background-light box">
-                                    <div class="is-size-5 mb-3">
-                                        <span class="is-block is-size-5	has-text-weight-bold">
-                                            {{ team.name }}
-                                            <i class="fas fa-user-alt mx-2"></i>{{ team.count }}
-                                        </span>
-                                    </div>
-                                    <span class="is-block is-size-6">{{ team.description }}</span>
-                                    <div class="is-grouped">
-                                        <button class="button is-success" id="{{ team.id }}" onclick="sendData(this, 'add', '{{ csrf_token }}')">Join Team</button>
-                                        <button class="button is-link" id="{{ team.id }}" onclick="openTeamPage(this)">View</button>
-                                    </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div id="current_teams">
+                        <div class="level">
+                            <div class="level-left">
+                                <h1 class="title is-3">My Teams ({{ teams_amount }})</h1>
+                            </div>
+                            <div class="level-right">
+                                <div class="control has-icons-left">
+                                    <input class="input" type="text" name="team-name" placehoder="Search" onkeyup="filterTeams(this)">
+                                    <span class="icon is-left">
+                                        <i class="fas fa-search"></i>
+                                    </span>
                                 </div>
-                                {% endfor %}
-                            {% endif %}
+                            </div>
                         </div>
-                    </diV>
-                </div>
+                        <div id="usersTeams">
+                        {% if relationships %}
+                            {% for rel in relationships %}
+                            <div class="has-background-light box" id="{{ rel.team.name }}">
+                                <div class="is-size-5 mb-3">
+                                    <span class="is-block is-size-5	has-text-weight-bold">
+                                        {{rel.team.name}}
+                                        <i class="fas fa-user-alt mx-2"></i>{{rel.team.count}}
+                                    </span>
+                                    {% if rel.team.private %}
+                                        <span class="tag is-info is-rounded">
+                                            <i class="fas fa-lock"></i>
+                                            &nbsp;Private
+                                        </span>
+                                    {% else %}
+                                        <span class="tag is-info is-rounded">
+                                            <i class="fas fa-unlock"></i>
+                                            &nbsp;Public
+                                        </span>
+                                    {% endif %}
+                                    {% if rel.role.role == "Owner" or rel.role.role == "Co-Owner" %}
+                                        <span class="tag is-dark is-rounded">
+                                            <i class="fas fa-user-edit"></i>
+                                            &nbsp;{{ rel.role.role }}
+                                        </span>
+                                    {% else %}
+                                        <span class="tag is-dark is-rounded">
+                                            <i class="fas fa-user"></i>
+                                            &nbsp;{{ rel.role.role }}
+                                        </span>
+                                    {% endif %}
+                                </div>
+                                <span class="is-block is-size-6">{{rel.team.description}}</span>
+                                <div class="is-grouped">
+                                    <button class="button is-link" id="{{rel.team.id}}" onclick="openTeamPage(this)">View</button>
+                                    <button class="button is-danger" id="{{rel.team.id}}" onclick="sendData(this, 'remove', '{{ csrf_token }}')">Leave</button>
+                                </div>
+                            </diV>
+                            {% endfor %}
+                        {% else %}
+                        <div class="has-background-light box">
+                            <div class="is-size-5 mb-3">
+                                <span>No found teams.</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        </div>
+                    </div>
+                    <div class="pt-5" id="public_teams">
+                        <h1 class="title is-3">Public Teams ({{ public_team_amount }})</h1>
+                        {% if public_teams %}
+                            {% for team in public_teams %}
+                            <div class="has-background-light box">
+                                <div class="is-size-5 mb-3">
+                                    <span class="is-block is-size-5	has-text-weight-bold">
+                                        {{ team.name }}
+                                        <i class="fas fa-user-alt mx-2"></i>{{ team.count }}
+                                    </span>
+                                </div>
+                                <span class="is-block is-size-6">{{ team.description }}</span>
+                                <div class="is-grouped">
+                                    <button class="button is-success" id="{{ team.id }}" onclick="sendData(this, 'add', '{{ csrf_token }}')">Join Team</button>
+                                    <button class="button is-link" id="{{ team.id }}" onclick="openTeamPage(this)">View</button>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </diV>
             </div>
         </div>
-    </section>
-    <script src="{% static "js/team_viewer.js" %}"></script>
+    </div>
+</section>
+<script src="{% static "js/team_viewer.js" %}"></script>
 {% endblock %}
