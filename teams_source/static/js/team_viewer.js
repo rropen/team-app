@@ -15,3 +15,15 @@ function sendData(e, type, token) {
         location.reload()
     })
 }
+
+function filterTeams(input) {
+    var teams = Array.from(document.getElementById("usersTeams").children)
+    for (team in teams) {
+        var teamID = teams[team].id.toString()
+        if (!teamID.toUpperCase().includes(input.value.toString().toUpperCase())) {
+            teams[team].style.display = "none";
+        } else {
+            teams[team].style.display = "";
+        }
+    }
+}

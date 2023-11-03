@@ -4,9 +4,7 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
-    {% if user.is_authenticated %}
-        <p>You have successfully logged in.</p>
-    {% else %}
-        <p>You are not logged in.</p>
-    {% endif %}
+<div class="container">
+    <h1 class="title is-3">Welcome, {{ request.user.username }}</h1>
+</div>
 {% endblock %}
