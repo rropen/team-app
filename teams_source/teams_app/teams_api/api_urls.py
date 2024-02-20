@@ -11,7 +11,6 @@ router.register(r'teams', AllUserTeamsViewSet, basename="users_teams")
 
 urlpatterns = [
     path('', include(router.urls)),
-    #re_path('^teams/(?P<username>.+)/$', UserTeamViewSet),
     re_path('^members/(?P<team>.+)/$', MembersTeamViewSet),
     re_path('^teams/?P<username>.+/$', AllUserTeamsViewSet)
 ]

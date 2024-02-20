@@ -1,9 +1,18 @@
 from rest_framework import viewsets
 from teams_app.models import Relationship, Team
 from .api_serializer import UsersTeamsSerializer, AdditionalTeam
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, AuthenticationFailed, PermissionDenied
 from django.contrib.auth.models import User
 from .serializers.teams_list import AllTeamSerializer
+import hashlib
+
+def teams_permission_check(request, username):
+    token = request.META.get("HTTP_TEAMS_TOKEN")
+    if not token:
+        raise AuthenticationFailed("No Token Found")
+    expected_token = hashlib.sha256((username + "AbsencePlanner").encode()).hexdigest()
+    if expected_token != token:
+        raise PermissionDenied("Invalid Token")
 
 class UserTeamViewSet(viewsets.ModelViewSet):
 
@@ -39,4 +48,8 @@ class AllUserTeamsViewSet(viewsets.ModelViewSet):
             raise NotFound(detail={"error_msg": "Error, no given username", "code": "N"}, code=404)
         elif not User.objects.filter(username=username).exists():
             raise NotFound(detail={"error_msg": "Error, invalid username", "code": "I"}, code=404)
+
+        teams_permission_check(self.request, username)
+
         return Relationship.objects.filter(user__username=username, status_id=1).all()
+

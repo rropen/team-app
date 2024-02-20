@@ -26,7 +26,6 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = "__all__"
 
-
 #JC - Serializer for api/teams
 class UsersTeamsSerializer(serializers.ModelSerializer):
     team = TeamSerializer(read_only=True)
@@ -44,7 +43,7 @@ class TeamMemberSerializer(serializers.ModelSerializer):
         fields = ["user"]
 
 class AdditionalTeam(serializers.ModelSerializer):
-    members = TeamMemberSerializer(many=True)
+    members = TeamMemberSerializer(many=True, read_only=True)
     class Meta:
         model = Team
         fields = ["id", "name", "description", "private", "members"]
