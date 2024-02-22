@@ -1,8 +1,15 @@
 from rest_framework import viewsets
+from rest_framework.response import Response
 from teams_app.models import Relationship, Team
-from .api_serializer import UsersTeamsSerializer, AdditionalTeam
+from .api_serializer import UsersTeamsSerializer, AdditionalTeam, TeamSerializer
 from rest_framework.exceptions import NotFound, AuthenticationFailed, PermissionDenied
+from rest_framework.decorators import api_view
+from rest_framework.views import APIView
+from rest_framework import status
+from rest_framework import permissions 
 from django.contrib.auth.models import User
+from django.http.response import JsonResponse, HttpResponseRedirect
+from django.http.request import HttpRequest
 from .serializers.teams_list import AllTeamSerializer
 import hashlib
 
@@ -53,3 +60,17 @@ class AllUserTeamsViewSet(viewsets.ModelViewSet):
 
         return Relationship.objects.filter(user__username=username, status_id=1).all()
 
+class TeamView(viewsets.ModelViewSet):
+
+    serializer_class = TeamSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        return Team.objects.all()
+    
+    def create(self, request:HttpRequest):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return HttpResponseRedirect(redirect_to="http://" + request.data["url"] + "/teams/")
+    
