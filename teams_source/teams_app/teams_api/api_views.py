@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from teams_app.models import Relationship, Team
-from .api_serializer import UsersTeamsSerializer, AdditionalTeam, TeamSerializer
+from .api_serializer import UsersTeamsSerializer, AdditionalTeam, TeamSerializer, RelationshipSerializer, JoinableTeamsSerializer
 from rest_framework.exceptions import NotFound, AuthenticationFailed, PermissionDenied
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.http.response import JsonResponse, HttpResponseRedirect
 from django.http.request import HttpRequest
 from .serializers.teams_list import AllTeamSerializer
+from django.shortcuts import get_object_or_404
 import hashlib
 
 def teams_permission_check(request, username):
@@ -66,11 +67,30 @@ class TeamView(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
-        return Team.objects.all()
+        username = self.request.query_params.get("username")
+        if not username:
+            raise NotFound(detail="Error, no given username", code=404)
+        elif not User.objects.filter(username=username).exists():
+            raise NotFound(detail="Error, invalid username", code=404)
+        
+        exclude_list = Relationship.objects.filter(user__username=username, status_id=1).values_list('team_id')
+
+        return Team.objects.filter(private=False).exclude(id__in=exclude_list)
     
     def create(self, request:HttpRequest):
-        serializer = self.get_serializer(data=request.data)
+        serializer = TeamSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return HttpResponseRedirect(redirect_to="http://" + request.data["url"] + "/teams/")
+
+class TeamManager(viewsets.ModelViewSet):
+
+    serializer_class = RelationshipSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        return Relationship.objects.all()
     
+    def get_object(self):
+        rel = get_object_or_404(Relationship, user_id=self.request.data["user"])
+        return rel
