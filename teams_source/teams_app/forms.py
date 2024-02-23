@@ -33,7 +33,7 @@ class CreateTeamForm(forms.ModelForm):
     #JC - Description field
     description = forms.CharField(
         max_length=512,
-        required=False
+        required=True
     )
 
     #JC - Private field

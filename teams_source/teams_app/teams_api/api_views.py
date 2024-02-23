@@ -94,3 +94,9 @@ class TeamManager(viewsets.ModelViewSet):
     def get_object(self):
         rel = get_object_or_404(Relationship, user_id=self.request.data["user"])
         return rel
+    
+    def create(self, request:HttpRequest):
+        serializer = RelationshipSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return HttpResponseRedirect(redirect_to="http://" + request.data["url"] + "/teams/")
