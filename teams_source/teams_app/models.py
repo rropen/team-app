@@ -9,6 +9,7 @@ class Team(models.Model):
     description = models.CharField(max_length=512)
     notes = models.CharField(max_length=512, null=False, default="")
     private = models.BooleanField(default=False)
+    creator_application = models.CharField(max_length=128, null=False) # application that created team
 
     def __str__(self):
         return f"{self.name}"
