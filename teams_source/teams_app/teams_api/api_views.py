@@ -68,7 +68,7 @@ class AllUserTeamsViewSet(viewsets.ModelViewSet):
 
         teams_permission_check(self.request, username)
 
-        return Relationship.objects.order_by(Lower("role__id")).filter(user__username=username, status_id=1).all()
+        return Relationship.objects.order_by(Lower("role__id")).filter(user__username=username, status_id=1).all().order_by("-favourite")
 
 class TeamView(viewsets.ModelViewSet):
 
