@@ -87,40 +87,58 @@ class TeamView(viewsets.ModelViewSet):
         return Team.objects.filter(private=False).exclude(id__in=exclude_list)
     
     def create(self, request:HttpRequest):
-        #Create Team
-        team_data = request.data.dict()
-        if team_data.get("private") is not None:
-            if team_data["private"] == "on":
-                team_data["private"] = True
+        method = request.query_params.get("method")
+        if method and str(method).lower() == "edit":
+            team = Team.objects.get(id=request.data["id"])
+            team.name = request.data["name"]
+            team.description = request.data["description"]
+            if request.data.get("private"):
+                team.private = True
+            else:
+                team.private = False
+            team.save()
+            return JsonResponse(data={"message": "success"}, status=200)
+        elif method and str(method).lower() == "delete":
+            team = Team.objects.get(id=request.data["id"])
+            team.delete()
+            return JsonResponse(data={"message": "success"}, status=200)
+        else:
+            #Create Team
+            team_data = request.data.dict()
+            if team_data.get("private") is not None:
+                if team_data["private"] == "on":
+                    team_data["private"] = True
+                else:
+                    team_data["private"] = False
             else:
                 team_data["private"] = False
-        else:
-            team_data["private"] = False
-        
-        serializer = TeamSerializer(data=team_data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            
+            serializer = TeamSerializer(data=team_data)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+            else:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        #Add Team Owner
-        #Check if username exists
-        if not User.objects.filter(username=request.data["username"]).exists():
-            raise NotFound(detail="Error, invalid username", code=404)
-        
-        owner_data = {
-            "user": User.objects.get(username=request.data["username"]),
-            "team": Team.objects.get(name=serializer.data["name"]),
-            "role": Role.objects.get(role="Owner"),
-            "status": Status.objects.get(status="Active")
-        }
-        
-        owner_serializer = RelationshipSerializer(data = owner_data)
-        owner_serializer.is_valid()
-        owner_serializer.save()
+            #Add Team Owner
+            #Check if username exists
+            if not User.objects.filter(username=request.data["username"]).exists():
+                raise NotFound(detail="Error, invalid username", code=404)
+            
+            owner_data = {
+                "user": User.objects.get(username=request.data["username"]),
+                "team": Team.objects.get(name=serializer.data["name"]),
+                "role": Role.objects.get(role="Owner"),
+                "status": Status.objects.get(status="Active")
+            }
+            
+            owner_serializer = RelationshipSerializer(data = owner_data)
+            owner_serializer.is_valid()
+            owner_serializer.save()
 
-        team_id = Team.objects.get(name=serializer.data["name"]).id
-        return JsonResponse(data={"message": "success", "id": team_id}, status=200)
+            team_id = Team.objects.get(name=serializer.data["name"]).id
+            return JsonResponse(data={"message": "success", "id": team_id}, status=200)
+        
+        return JsonResponse(data={"error": "Invalid method"}, status=404)
 
 class JoinableTeams(viewsets.ModelViewSet):
 
