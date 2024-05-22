@@ -22,8 +22,21 @@ function deleteTeam(token) {
         body: data
     })
     .then(() => {
-        location.assign("/team_viewer")
+        location.assign("/teams")
     })
+}
+
+function confirmEdit() {
+    document.getElementById("editTeamConfirmation").style.display = "none";
+    document.getElementById("editTeamForm").submit()
+}
+
+function editTeamButton() {
+    document.getElementById("editTeamConfirmation").style.display = "block";
+}
+
+function closeEditMenu() {
+    document.getElementById("editTeamConfirmation").style.display = "none";
 }
 
 function removeTeamButton() {

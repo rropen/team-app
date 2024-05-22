@@ -33,7 +33,7 @@ class CreateTeamForm(forms.ModelForm):
     #JC - Description field
     description = forms.CharField(
         max_length=512,
-        required=False
+        required=True
     )
 
     #JC - Private field
@@ -48,7 +48,7 @@ class CreateTeamForm(forms.ModelForm):
         error_set = False
         for team in teams:
             similarity = SequenceMatcher(None, team_name, team.name).ratio()
-            if similarity >= 0.9 and not error_set:
+            if team.name.lower() == team_name.lower() or similarity >= 0.9 and not error_set:
                 self.add_error('name', 'This name is to similar to an existing team name.')
                 error_set = True
         return cleaned_data

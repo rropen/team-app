@@ -21,6 +21,18 @@
                             <button class="button is-danger" id="cancelDelete" onclick="closeDeletionMenu()">Cancel</button>
                         </div>
                     </article>
+
+                    <article class="message is-info" style="display: none; position: fixed; z-index: 5;" id="editTeamConfirmation">
+                        <div class="message-header">
+                            <p>Edit Team</p>
+                            <button class="info" aria-label="edit" id="deleteTeamClose" onclick="closeEditMenu()"></button>
+                        </div>
+                        <div class="message-body" style="text-align: center;">
+                            <p>Edit the team?</p>
+                            <button class="button is-info" id="editTeam" onclick="confirmEdit()">Confirm</button>
+                            <button class="button is-info" id="cancelDelete" onclick="closeEditMenu()">Cancel</button>
+                        </div>
+                    </article>
                 </div>
             </div>
         </div>
@@ -120,7 +132,7 @@
                                 Team Management
                             </span>
                         </div>
-                        <form method="POST" action="/team/{{ team_id }}">
+                    <form method="POST" action="/team/{{ team_id }}" id="editTeamForm">
                             {% csrf_token %}
                             {% for field in edit_form %}
                             <div class="field">
@@ -140,11 +152,13 @@
                                 </label>
                                 {% endif %}
                             </div>
-                            {% endfor %}
-                            <div class="field">
-                                <button class="button is-info">Edit team</button>
-                            </div>
+                            {% endfor %} 
                         </form>
+
+                        <div class="field">
+                            <button class="button is-info" onclick="editTeamButton()">Edit team</button>                                
+                        </div>
+                            
                         <div class="pt-4">
                             <label class="label">Danger Zone:</label>
                             <button class="button is-danger" onclick="removeTeamButton()">Delete Team</button>

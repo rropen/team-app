@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from teams_app.models import Relationship, Team
 from django.contrib.auth.models import User
+from ..api_serializer import RoleSerializer
 
 # Purpose - This API lists the teams of a given user
 # URL - api/teams/?username=USERNAME
@@ -24,6 +25,7 @@ class TeamSerializerAddon(serializers.ModelSerializer):
 
 class AllTeamSerializer(serializers.ModelSerializer):
     team = TeamSerializerAddon(read_only=True)
+    role = RoleSerializer(read_only=True)
     class Meta:
         model = Relationship
-        fields = ["team"]
+        fields = ["team", "role", "favourite"]

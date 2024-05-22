@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'bulma',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     
 ]
 
@@ -57,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -94,6 +96,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'teams_site.wsgi.application'
 
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:8001',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8001',
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases

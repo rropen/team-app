@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models.functions import Lower
 from .forms import LoginForm, RegisterForm, CreateTeamForm
-from .models import Team, Role, Relationship, Status, UserProfile
+from .models import Team, Role, Relationship, Status
 import holidays, pycountry
 import json
 
@@ -91,7 +91,7 @@ def focus_team_view(request, team_id):
     #JC - This will redirect them if they don't have permission to view the team
     if Team.objects.filter(id=team_id)[0].private:
         if not Relationship.objects.filter(user=request.user, team_id=team_id, status=1).exists():
-            return redirect("/team_viewer")
+            return redirect("/teams")
 
     #JC - This recives the data from the web page
     messages = []
@@ -105,19 +105,22 @@ def focus_team_view(request, team_id):
                 rel = Relationship.objects.filter(user_id=data["user_id"], team_id=team_id)
                 rel.delete()
             elif data["type"] == "delete_team":
-                print("Deleting team")
                 Team.objects.get(id=team_id).delete()
-                return redirect("/team_viewer")
+                return redirect("/teams")
         else:
             if "name" in request.POST and "description" in request.POST:
                 team_edit_form = CreateTeamForm(request.POST)
                 current_team = Team.objects.get(id=team_id)
                 current_team.name = team_edit_form.data["name"]
                 current_team.description = team_edit_form.data["description"]
-                if team_edit_form.data["private"] == "on":
-                    current_team.private = True
-                else:
+                try: #This try except will handle the strange error caused by editing the team with the "Private Team" box unchecked, fixing the issue.
+                    if team_edit_form.data["private"] == "on":
+                        current_team.private = True
+                    else:
+                        current_team.private = False
+                except:
                     current_team.private = False
+                    
                 current_team.save()
             elif "user" in request.POST and "role" in request.POST:
                 if request.POST.get("user"):
@@ -146,7 +149,7 @@ def focus_team_view(request, team_id):
     try:
         team = Team.objects.get(id=team_id)
     except:
-        return redirect("/team_viewer")
+        return redirect("/teams")
     
     member_list = Relationship.objects.filter(team=team, status=1)
     role_list = Role.objects.all()
@@ -242,3 +245,7 @@ def profile(request):
 
     context = {"countries":countries, "current_country":country_name}
     return render(request, "pages/profile.html", context)
+
+def privacycheck(request):
+    my_variable = "Hello world"
+    return render( request, 'pages/teams/focus_team.html', { 'my_variable' : my_variable })
