@@ -169,8 +169,8 @@ def focus_team_view(request, team_id):
 
 #JC - Team management page
 @login_required
-def team_management_view(request):
-    return render(request, "pages/teams/team_manager.html", {"management_active": True})
+#def team_management_view(request):
+   # return render(request, "pages/teams/team_manager.html", {"management_active": True})
 
 #JC - Create team view
 @login_required
