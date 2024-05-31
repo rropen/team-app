@@ -61,14 +61,19 @@ class AllUserTeamsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         username = self.request.query_params.get("username")
+        sort = self.request.query_params.get("sort")
         if not username:
             raise NotFound(detail={"error_msg": "Error, no given username", "code": "N"}, code=404)
         elif not User.objects.filter(username=username).exists():
             raise NotFound(detail={"error_msg": "Error, invalid username", "code": "I"}, code=404)
 
+
         teams_permission_check(self.request, username)
 
-        return Relationship.objects.order_by(Lower("role__id")).filter(user__username=username, status_id=1).all().order_by("-favourite")
+        if sort is not None and sort != "None":
+            return Relationship.objects.order_by(sort).filter(user__username=username, status_id=1).all()
+        else:
+            return Relationship.objects.order_by("-favourite").filter(user__username=username, status_id=1).all()
 
 class TeamView(viewsets.ModelViewSet):
 
