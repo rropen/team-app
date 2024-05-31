@@ -114,6 +114,16 @@ DATABASES = {
     }
 }
 
+if not DEBUG:
+    DATABASES = {
+        "ENGINE":"django.db.backends.mysql",
+        "NAME":"teamapp",
+        "HOST":"104.248.160.195",
+        "USER":"teamappuser",
+        "PASSWORD":"yshjWmgEuoKt28nG2xZP",
+        "PORT":"",
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
