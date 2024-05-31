@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,12 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-uu@)kw%6_gi9cu(x^!7nk$1(zoq%5*lcw)d-hui&qj=#5o-119'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG_ENV = os.getenv("DEBUG")
+DEBUG = DEBUG_ENV is not None and DEBUG_ENV.lower() == "true"
+
+STATIC_ROOT = BASE_DIR / 'static/css'
 
 if DEBUG == True:
     ALLOWED_HOSTS = []
 else:
-    ALLOWED_HOSTS = ["*"]
+    ALLOWED_HOSTS = ["localhost","127.0.0.1","team-app.dcrr.dev"]
 
 
 
@@ -108,20 +114,21 @@ CSRF_TRUSTED_ORIGINS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
 if not DEBUG:
     DATABASES = {
-        "ENGINE":"django.db.backends.mysql",
-        "NAME":"teamapp",
-        "HOST":"104.248.160.195",
-        "USER":"teamappuser",
-        "PASSWORD":"yshjWmgEuoKt28nG2xZP",
-        "PORT":"",
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ["DB_NAME"],
+            'USER': os.environ["DB_USER"],
+            "PASSWORD": os.environ["DB_PASSWORD"],
+            "HOST": os.environ["DB_HOST"],
+        }
     }
 
 
@@ -170,9 +177,10 @@ STATIC_ROOT = BASE_DIR / "static_root"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-PRODUCTION_UI = True
 NAME = "Team App"
-VERSION = "v1.0.0"
+PRODUCTION_UI_ENV = os.getenv("PRODUCTION_UI")
+PRODUCTION_UI = PRODUCTION_UI_ENV is not None and PRODUCTION_UI_ENV.lower() == "true"
+VERSION = "1.0.0"
 
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
