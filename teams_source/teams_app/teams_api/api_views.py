@@ -187,10 +187,17 @@ class ManageTeam(viewsets.ModelViewSet):
             return JsonResponse(data={"message": "success"}, status=200)
         
         elif str(method).lower() == "leave":
+            username = request.data["username"]
+            team_id = request.data["team"]
+
             rel = Relationship.objects.filter(user__username=request.data["username"], team__id=request.data["team"], status=Status.objects.get(status="Active"))
             if not rel.exists():
                 return JsonResponse(data={"error": "Relationship not found"} ,status=404)
             
+            team = Team.objects.get(id=team-id)
+            if team.owner.username == username:
+                if team.members.count() == 1:
+                    return JsonResponse(data={"error": "You are the only member of this team. Please delete the team instead of leaving."}, status=403)
             rel[0].delete()
             return JsonResponse(data={"message": "success"}, status=200)
 
@@ -201,11 +208,7 @@ class ManageTeam(viewsets.ModelViewSet):
                 return JsonResponse(data={"error": "Relationship not found"} ,status=404)
             
             teamRel:Relationship = rel[0]
-            if teamRel.favourite:
-                teamRel.favourite = False
-            else:
-                teamRel.favourite = True
-
+            teamRel.favourite = not teamRel.favourite
             teamRel.save(force_update=True)
             return JsonResponse(data={"message": "success"}, status=200)
 
