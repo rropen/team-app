@@ -17,17 +17,6 @@ function removeHover(e) {
     }
 }
 
-function favouriteTeam(e, user, id) {
-    var data = JSON.stringify({"username":user,"team":id})
-    fetch('http://localhost:8000/api/manage/?method=favourite', {
-        method:"POST",
-        body:data,
-    })
-    .then(()=>{
-        location.reload()
-    })
-}
-
 function sendData(e, type, token) {
     var data = JSON.stringify({"type": type, "team_id": e.id})
     fetch(window.location.href, {
