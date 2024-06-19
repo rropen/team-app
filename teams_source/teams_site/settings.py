@@ -32,7 +32,7 @@ DEBUG = DEBUG_ENV is not None and DEBUG_ENV.lower() == "true"
 STATIC_ROOT = BASE_DIR / 'static/css'
 
 if DEBUG == True:
-    ALLOWED_HOSTS = []
+    ALLOWED_HOSTS = ["*"]
 else:
     ALLOWED_HOSTS = ["localhost","127.0.0.1","team-app.dcrr.dev"]
 
