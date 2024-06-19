@@ -68,6 +68,7 @@ if EXIST teams_source/manage.py (
     "venv\Scripts\python" teams_source/manage.py collectstatic --noinput
 
     ECHO This process has successfully finished
+    ECHO Don't forget to activate virtual environment before running manage.py
 )
 
 PAUSE
