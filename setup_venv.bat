@@ -2,7 +2,7 @@
 
 SET PYTHON_EXECUTABLE=notfound
 @REM LOOP test
-FOR %%P IN ("python3.11", "python3.8", "py") DO (
+FOR %%P IN ("python") DO (
 	%%~P --version
 	IF NOT ERRORLEVEL 1 (
 		SET PYTHON_EXECUTABLE=%%~P
@@ -30,7 +30,8 @@ IF NOT EXIST venv\Scripts\activate.bat (
 
 IF NOT EXIST venv\req_installed (
 	ECHO Installing requirements
-		"venv\Scripts\pip" install -r requirements.txt
+        "venv\Scripts\python" -m pip install --upgrade pip
+        "venv\Scripts\python" -m pip install -r requirements.txt
 	COPY NUL venv\req_installed
 ) ELSE (
 	ECHO Requirements are already installed
