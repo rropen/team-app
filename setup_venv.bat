@@ -39,6 +39,8 @@ IF NOT EXIST venv\req_installed (
 
 @REM Initialise Django
 
+COPY "example_env.txt" ".env"
+
 if EXIST teams_source/manage.py (
     ECHO Making migrations
 	"venv\Scripts\python" teams_source/manage.py makemigrations
