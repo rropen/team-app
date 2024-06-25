@@ -27,11 +27,13 @@
                                         {% else %}
                                         <textarea class="textarea" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value }}"></textarea>
                                         {% endif %}
-                                    {% else %}
+                                    {% elif field.name == "private" %}
                                         <label class="checkbox">
                                             <input type="checkbox" name="{{ field.name }}" id="{{ field.id_for_label }}">
                                             Private team
                                         </label>
+                                    {% elif field.name == "origin_application" %}
+                                        <input class="input" type="hidden" name="{{ field.name }}" required id="{{ field.id_for_label }}" value="Team App">
                                     {% endif %}
                                 </div>
                                 {% if field.errors %}
