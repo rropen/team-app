@@ -21,7 +21,7 @@ class CreateTeamForm(forms.ModelForm):
 
     class Meta:
         model = Team
-        fields = ["name", "description", "private"]
+        fields = ["name", "description", "private", "origin_application"]
     
     #JC - Requirements for the team name
     name = forms.CharField(
@@ -39,6 +39,14 @@ class CreateTeamForm(forms.ModelForm):
     #JC - Private field
     private = forms.BooleanField(
         required=False
+    )
+
+    # Fill in the application that created team for data collection purposes
+    origin_application = forms.CharField(
+        required=False,
+        max_length=128,
+        widget=forms.HiddenInput(),
+        label=""
     )
 
     def clean(self):
