@@ -53,3 +53,29 @@ function filterTeams(input) {
         }
     }
 }
+
+function showLeaveTeamModal(button, token) {
+    
+    window.currentLeaveButton = button;
+    window.leaveToken = token;
+
+    const modal = document.getElementById('leaveTeamModal');
+    modal.classList.add('is-active');
+
+    document.getElementById('confirmLeaveButton').onclick = function() {
+        sendData(window.currentLeaveButton, 'remove', window.leaveToken);
+
+        modal.classList.remove('is-active');
+    };
+
+    document.getElementById('cancelLeaveButton').onclick = function() {
+        modal.classList.remove('is-active');
+    };
+
+    modal.querySelector('.modal-background').onclick = function() {
+        modal.classList.remove('is-active');
+    };
+    modal.querySelector('.modal-close').onclick = function() {
+        modal.classList.remove('is-active');
+    };
+}

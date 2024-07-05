@@ -21,7 +21,7 @@
                                 <div class="level">
                                     <div class="level-left">
                                         <div class="level-item">
-                                            <p>You recieved an invite to <strong>{{ invite.team.name }}</strong>.
+                                            <p>You received an invite to <strong>{{ invite.team.name }}</strong>.
                                                 <br>
                                                 <em>{{ invite.team.description }}</em>
                                             </p>
@@ -48,7 +48,7 @@
                             </div>
                             <div class="level-right">
                                 <div class="control has-icons-left">
-                                    <input class="input" type="text" name="team-name" placehoder="Search" onkeyup="filterTeams(this)">
+                                    <input class="input" type="text" name="team-name" placeholder="Search" onkeyup="filterTeams(this)">
                                     <span class="icon is-left">
                                         <i class="fas fa-search"></i>
                                     </span>
@@ -91,9 +91,9 @@
                                 <span class="is-block is-size-6">{{rel.team.description}}</span>
                                 <div class="is-grouped">
                                     <button class="button is-link" id="{{rel.team.id}}" onclick="openTeamPage(this)">View</button>
-                                    <button class="button is-danger" id="{{rel.team.id}}" onclick="sendData(this, 'remove', '{{ csrf_token }}')">Leave</button>
+                                    <button class="button is-danger" id="{{rel.team.id}}" onclick="showLeaveTeamModal(this, '{{ csrf_token }}')">Leave</button>
                                 </div>
-                            </diV>
+                            </div>
                             {% endfor %}
                         {% else %}
                         <div class="has-background-light box">
@@ -126,10 +126,27 @@
                             {% endfor %}
                         {% endif %}
                     </div>
-                </diV>
+                </div>
             </div>
         </div>
     </div>
 </section>
-<script src="{% static "js/team_viewer.js" %}"></script>
+
+<!-- Confirmation Modal -->
+<div id="leaveTeamModal" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-content">
+        <div class="box">
+            <h1 class="title">Confirm Leave</h1>
+            <p>Are you sure you want to leave this team?</p>
+            <div class="buttons is-right">
+                <button id="confirmLeaveButton" class="button is-danger">Leave</button>
+                <button id="cancelLeaveButton" class="button">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <button class="modal-close is-large" aria-label="close"></button>
+</div>
+
+<script src="{% static 'js/team_viewer.js' %}"></script>
 {% endblock %}

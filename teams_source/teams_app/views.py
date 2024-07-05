@@ -1,6 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.db.models.functions import Lower
 from .forms import LoginForm, RegisterForm, CreateTeamForm
@@ -49,26 +50,42 @@ def team_viewer_view(request):
 
     if request.method == "POST":
         data = json.loads(request.body)
-        #JC - Leave a team
+        team_id = data.get("team_id")
+        rel = Relationship.objects.filter(user=request.user, team_id=team_id).first()
+
         if data["type"] == "remove":
-            rel = Relationship.objects.filter(user=request.user, team_id=data["team_id"])
-            rel.delete()
-        #JC - Join a team
+            if rel:
+                rel.delete()
+                return JsonResponse({"status": "removed"})
+            else:
+                return JsonResponse({"status": "not_found"}, status=404)
+
         elif data["type"] == "add":
-            rel = Relationship.objects.create(
-                user=request.user,
-                team=Team.objects.get(id=data["team_id"]),
-                role=Role.objects.get(role="Member"),
-                status=Status.objects.get(id=1)
-            )
-            rel.save()
+            if not Relationship.objects.filter(user=request.user, team_id=team_id).exists():
+                Relationship.objects.create(
+                    user=request.user,
+                    team=Team.objects.get(id=team_id),
+                    role=Role.objects.get(role="Member"),
+                    status=Status.objects.get(id=1)
+                )
+                return JsonResponse({"status": "added"})
+            else:
+                return JsonResponse({"status": "already_member"}, status=400)
+
         elif data["type"] == "accept":
-            rel = Relationship.objects.filter(user=request.user, team_id=data["team_id"])[0]
-            rel.status = Status.objects.get(id=1)
-            rel.save()
+            if rel:
+                rel.status = Status.objects.get(id=1)
+                rel.save()
+                return JsonResponse({"status": "accepted"})
+            else:
+                return JsonResponse({"status": "not_found"}, status=404)
+
         elif data["type"] == "decline":
-            rel = Relationship.objects.filter(user=request.user, team_id=data["team_id"])
-            rel.delete()
+            if rel:
+                rel.delete()
+                return JsonResponse({"status": "declined"})
+            else:
+                return JsonResponse({"status": "not_found"}, status=404)
 
     relationships = Relationship.objects.order_by(Lower("role__id")).filter(user=request.user, status=1)
     all_teams = Team.objects.all().order_by(Lower("name")).exclude(relationship__user=request.user.id).exclude(private=True)
