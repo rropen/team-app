@@ -66,8 +66,8 @@ if EXIST teams_source/manage.py (
         ECHO Super User already created
     )
 
-    ECHO Collecting static files
-    "venv\Scripts\python" teams_source/manage.py collectstatic --noinput
+    @REM ECHO Collecting static files
+    @REM "venv\Scripts\python" teams_source/manage.py collectstatic --noinput
 
     ECHO This process has successfully finished
     ECHO Don't forget to activate virtual environment before running manage.py
