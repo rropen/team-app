@@ -12,6 +12,7 @@ from django.http.request import HttpRequest
 from .serializers.teams_list import AllTeamSerializer
 from django.shortcuts import get_object_or_404
 import hashlib
+from rest_framework.views import APIView
 
 def teams_permission_check(request:HttpRequest, username):
     token = request.META.get("HTTP_TEAMS_TOKEN")
@@ -211,3 +212,15 @@ class ManageTeam(viewsets.ModelViewSet):
 
         else:
             return JsonResponse(data={"error": "Invalid Method"}, status=404)
+
+class StatusCheck(viewsets.ViewSet):
+    """
+    Returns a success message, used to check if the Team App and API are running correctly.
+    In the Absence Planner, this is used to show the user a 503 if the API is not running.
+    """
+
+    permission_classes = [permissions.AllowAny]
+
+    def list(self, request):
+        return Response("success", status=200)
+
