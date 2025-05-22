@@ -224,3 +224,26 @@ class StatusCheck(viewsets.ViewSet):
     def list(self, request):
         return Response("success", status=200)
 
+class CheckUserExists(viewsets.ViewSet):
+    """
+    Checks if the user exists in the Team App database.
+    In the Absence Planner, this is used to show the user validation error when registering their
+    account so that they first create an account on the Team App.
+    """
+
+    permission_classes = [permissions.AllowAny]
+
+    def list(self, request):
+        username = self.request.query_params.get("username")
+        print(username)
+        try:
+            teams_permission_check(self.request, username)
+        except:
+            return Response(status=403)
+
+        try:
+            User.objects.get(username=username)
+        except:
+            return Response(False, status=200)
+        
+        return Response(True, status=200)

@@ -12,6 +12,7 @@ router.register(r'teams', TeamView, basename="creator")
 router.register(r'joinable', JoinableTeams, basename="joinable")
 router.register(r'manage', ManageTeam, basename="manage")
 router.register(r'status_check', StatusCheck, basename="manage")
+router.register(r'user_exists', CheckUserExists, basename="user_exists")
 
 urlpatterns = [
     path('', include(router.urls)),
