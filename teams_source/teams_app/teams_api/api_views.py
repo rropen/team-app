@@ -196,7 +196,6 @@ class ManageTeam(viewsets.ModelViewSet):
             return JsonResponse(data={"message": "success"}, status=200)
 
         elif str(method).lower() == "favourite":
-            print(request.data)
             rel = Relationship.objects.filter(user__username=request.data["username"], team__id=request.data["team"], status=Status.objects.get(status="Active"))
             if not rel.exists():
                 return JsonResponse(data={"error": "Relationship not found"} ,status=404)
@@ -235,7 +234,6 @@ class CheckUserExists(viewsets.ViewSet):
 
     def list(self, request):
         username = self.request.query_params.get("username")
-        print(username)
         try:
             teams_permission_check(self.request, username)
         except:
