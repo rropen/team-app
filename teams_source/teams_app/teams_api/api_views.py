@@ -23,19 +23,6 @@ def teams_permission_check(request:HttpRequest, username):
     if expected_token != token:
         raise PermissionDenied("Invalid Token")
 
-class UserTeamViewSet(viewsets.ModelViewSet):
-
-    serializer_class = UsersTeamsSerializer
-    permission_classes = [HasAPIKey]
-
-    def get_queryset(self):
-        username = self.request.query_params.get("username")
-        if not username:
-            raise NotFound(detail="Error, no given username", code=404)
-        elif not User.objects.filter(username=username).exists():
-            raise NotFound(detail="Error, invalid username", code=404)
-        return Relationship.objects.filter(user__username=username, status_id=1).all()
-
 class MembersTeamViewSet(viewsets.ModelViewSet):
 
     serializer_class = AdditionalTeam
