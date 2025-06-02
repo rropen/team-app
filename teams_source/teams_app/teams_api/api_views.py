@@ -13,6 +13,7 @@ from .serializers.teams_list import AllTeamSerializer
 from django.shortcuts import get_object_or_404
 import hashlib
 from rest_framework.views import APIView
+from rest_framework_api_key.permissions import HasAPIKey
 
 def teams_permission_check(request:HttpRequest, username):
     token = request.META.get("HTTP_TEAMS_TOKEN")
@@ -25,6 +26,7 @@ def teams_permission_check(request:HttpRequest, username):
 class UserTeamViewSet(viewsets.ModelViewSet):
 
     serializer_class = UsersTeamsSerializer
+    permission_classes = [HasAPIKey]
 
     def get_queryset(self):
         username = self.request.query_params.get("username")
@@ -37,6 +39,7 @@ class UserTeamViewSet(viewsets.ModelViewSet):
 class MembersTeamViewSet(viewsets.ModelViewSet):
 
     serializer_class = AdditionalTeam
+    permission_classes = [HasAPIKey]
 
     def get_queryset(self):
         team = self.request.query_params.get("team")
@@ -59,6 +62,7 @@ class MembersTeamViewSet(viewsets.ModelViewSet):
 class AllUserTeamsViewSet(viewsets.ModelViewSet):
 
     serializer_class = AllTeamSerializer
+    permission_classes = [HasAPIKey]
 
     def get_queryset(self):
         username = self.request.query_params.get("username")
@@ -79,7 +83,7 @@ class AllUserTeamsViewSet(viewsets.ModelViewSet):
 class TeamView(viewsets.ModelViewSet):
 
     serializer_class = TeamSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny, HasAPIKey]
 
     def get_queryset(self):
         username = self.request.query_params.get("username")
@@ -149,7 +153,7 @@ class TeamView(viewsets.ModelViewSet):
 class JoinableTeams(viewsets.ModelViewSet):
 
     serializer_class = TeamSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny, HasAPIKey]
 
     def get_queryset(self):
         username = self.request.query_params.get("username")
@@ -164,7 +168,7 @@ class JoinableTeams(viewsets.ModelViewSet):
 class ManageTeam(viewsets.ModelViewSet):
 
     serializer_class = RelationshipSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny, HasAPIKey]
 
     def create(self, request:HttpRequest):
         method = request.query_params.get("method")
@@ -230,7 +234,7 @@ class CheckUserExists(viewsets.ViewSet):
     account so that they first create an account on the Team App.
     """
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny, HasAPIKey]
 
     def list(self, request):
         username = self.request.query_params.get("username")
