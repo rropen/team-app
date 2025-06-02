@@ -59,3 +59,6 @@ class Relationship(models.Model):
     def __str__(self):
         return f"User: {self.user.username}({self.user.id}) -> {self.team.name}({self.team.id}) as {self.role}"
     
+class UserToken(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    username_hash = models.CharField(max_length=255, null=True, unique=True)

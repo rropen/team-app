@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from teams_app.models import Relationship, Team, Role, Status
+from teams_app.models import Relationship, Team, Role, Status, UserToken
 from .api_serializer import UsersTeamsSerializer, AdditionalTeam, TeamSerializer, RelationshipSerializer
 from rest_framework.exceptions import NotFound, AuthenticationFailed, PermissionDenied
 from django.db.models.functions import Lower
@@ -23,12 +23,37 @@ def teams_permission_check(request:HttpRequest, username):
     if expected_token != token:
         raise PermissionDenied("Invalid Token")
 
+def verify_user_token(request:HttpRequest):
+    """
+    Takes the user's token from the request headers and matches it against a user's token in the
+    Team App database. This is the hash of the user's username, which should be the same between
+    both the Team App and the app querying the API (e.g., the Absence Planner).
+
+    This might seem insecure at first as validating the users identity through a simple request
+    header can be easily forged. However, this is a private API that requires the use of an API
+    key, and the querying app (i.e., the Absence Planner) pulls the username from the user's
+    session and sends it to this private API, so the API request can be trusted.
+    """
+
+    try:
+        given_username_hash = request.headers["User-Token"]
+        user_token = UserToken.objects.get(username_hash=given_username_hash)
+    except:
+        raise AuthenticationFailed("No User Token Found")
+
+    stored_username_hash = user_token.username_hash
+    if (given_username_hash != stored_username_hash):
+        raise PermissionDenied("Invalid User Token")
+
+
 class MembersTeamViewSet(viewsets.ModelViewSet):
 
     serializer_class = AdditionalTeam
     permission_classes = [HasAPIKey]
 
     def get_queryset(self):
+        verify_user_token(self.request)
+
         team = self.request.query_params.get("team")
         id = self.request.query_params.get("id")
         
