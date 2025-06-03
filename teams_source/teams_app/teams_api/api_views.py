@@ -1,7 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
-from teams_app.models import Relationship, Team, Role, Status, UserToken
+from teams_app.models import Relationship, Team, Role, Status
+from teams_app.teams_api.api_utils import verify_user_token, get_role_of_user_in_team, has_permitted_role
 from .api_serializer import UsersTeamsSerializer, AdditionalTeam, TeamSerializer, RelationshipSerializer
 from rest_framework.exceptions import NotFound, AuthenticationFailed, PermissionDenied
 from django.db.models.functions import Lower
@@ -11,40 +12,7 @@ from django.http.response import HttpResponseRedirect, JsonResponse
 from django.http.request import HttpRequest
 from .serializers.teams_list import AllTeamSerializer
 from django.shortcuts import get_object_or_404
-import hashlib
-from rest_framework.views import APIView
 from rest_framework_api_key.permissions import HasAPIKey
-
-def teams_permission_check(request:HttpRequest, username):
-    token = request.META.get("HTTP_TEAMS_TOKEN")
-    if not token:
-        raise AuthenticationFailed("No Token Found")
-    expected_token = hashlib.sha256((username + "AbsencePlanner").encode()).hexdigest()
-    if expected_token != token:
-        raise PermissionDenied("Invalid Token")
-
-def verify_user_token(request:HttpRequest):
-    """
-    Takes the user's token from the request headers and matches it against a user's token in the
-    Team App database. This is the hash of the user's username, which should be the same between
-    both the Team App and the app querying the API (e.g., the Absence Planner).
-
-    This might seem insecure at first as validating the users identity through a simple request
-    header can be easily forged. However, this is a private API that requires the use of an API
-    key, and the querying app (i.e., the Absence Planner) pulls the username from the user's
-    session and sends it to this private API, so the API request can be trusted.
-    """
-
-    try:
-        given_username_hash = request.headers["User-Token"]
-        user_token = UserToken.objects.get(username_hash=given_username_hash)
-    except:
-        raise AuthenticationFailed("No User Token Found")
-
-    stored_username_hash = user_token.username_hash
-    if (given_username_hash != stored_username_hash):
-        raise PermissionDenied("Invalid User Token")
-
 
 class MembersTeamViewSet(viewsets.ModelViewSet):
 
@@ -52,8 +20,6 @@ class MembersTeamViewSet(viewsets.ModelViewSet):
     permission_classes = [HasAPIKey]
 
     def get_queryset(self):
-        verify_user_token(self.request)
-
         team = self.request.query_params.get("team")
         id = self.request.query_params.get("id")
         

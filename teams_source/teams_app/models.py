@@ -46,7 +46,7 @@ class Relationship(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name="team_role")
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     favourite = models.BooleanField(default=False)
 
