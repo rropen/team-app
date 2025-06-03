@@ -38,6 +38,13 @@ class MembersTeamViewSet(viewsets.ModelViewSet):
         
 
 class AllUserTeamsViewSet(viewsets.ModelViewSet):
+    """
+    Utility API View that reads all of the data about teams that a user is already in, as well as their team members.
+
+    In the Absence Planner, this is used for the:
+        - Teams Dashboard (where the user can see teams they have already joined)
+        - Absence Calendar (where the user can see the absences of all the teams they are in)
+    """
 
     serializer_class = AllTeamSerializer
     permission_classes = [HasAPIKey]
@@ -59,6 +66,20 @@ class AllUserTeamsViewSet(viewsets.ModelViewSet):
             return Relationship.objects.order_by("-favourite").filter(user__username=username, status_id=1).all()
 
 class TeamView(viewsets.ModelViewSet):
+    """
+    A general-purpose API View for CRUD operations on teams data. Permissions are validated
+    with the username derived from the user token in the request header.
+
+    CRUD operations as used in the Absence Planner include:
+        - Creating a team (Create)
+            - Authenticated Users
+        - Viewing teams that the user is not already in (Read)
+            - Authenticated Users
+        - Editing a team (Update)
+            - Team Owner
+        - Deleting a team (Delete)
+            - Team Owner
+    """
 
     serializer_class = TeamSerializer
     permission_classes = [permissions.AllowAny, HasAPIKey]
@@ -68,6 +89,9 @@ class TeamView(viewsets.ModelViewSet):
         if not username:
             raise NotFound(detail="Error, no given username", code=404)
         elif not User.objects.filter(username=username).exists():
+        """
+        View joinable teams
+        """
             raise NotFound(detail="Error, invalid username", code=404)
         
         exclude_list = Relationship.objects.filter(user__username=username, status_id=1).values_list('team_id')
@@ -75,6 +99,9 @@ class TeamView(viewsets.ModelViewSet):
         return Team.objects.filter(private=False).exclude(id__in=exclude_list)
     
     def create(self, request:HttpRequest):
+        """
+        Create, edit, or delete a team
+        """
         method = request.query_params.get("method")
         if method and str(method).lower() == "edit":
             team = Team.objects.get(id=request.data["id"])
