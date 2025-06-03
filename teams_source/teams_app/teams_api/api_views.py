@@ -40,25 +40,26 @@ class MembersTeamViewSet(viewsets.ModelViewSet):
 class AllUserTeamsViewSet(viewsets.ModelViewSet):
     """
     Utility API View that reads all of the data about teams that a user is already in, as well as their team members.
+    Permissions are validated with the username derived from the user token in the request header.
 
     In the Absence Planner, this is used for the:
         - Teams Dashboard (where the user can see teams they have already joined)
+            - Authenticated Users
         - Absence Calendar (where the user can see the absences of all the teams they are in)
+            - Authenticated Users
     """
 
     serializer_class = AllTeamSerializer
     permission_classes = [HasAPIKey]
 
     def get_queryset(self):
-        username = self.request.query_params.get("username")
+        # We need a username from the user token so that we can only get the teams associated with that user.
+        username = verify_user_token(self.request)
+
         sort = self.request.query_params.get("sort")
-        if not username:
-            raise NotFound(detail={"error_msg": "Error, no given username", "code": "N"}, code=404)
-        elif not User.objects.filter(username=username).exists():
-            raise NotFound(detail={"error_msg": "Error, invalid username", "code": "I"}, code=404)
 
-
-        teams_permission_check(self.request, username)
+        # We do not need to check if a user with that username exists because
+        # that is done in the verify_user_token utility function anyways.
 
         if sort is not None and sort != "None":
             return Relationship.objects.order_by(sort).filter(user__username=username, status_id=1).all()
@@ -82,18 +83,19 @@ class TeamView(viewsets.ModelViewSet):
     """
 
     serializer_class = TeamSerializer
-    permission_classes = [permissions.AllowAny, HasAPIKey]
+    permission_classes = [HasAPIKey]
 
     def get_queryset(self):
-        username = self.request.query_params.get("username")
-        if not username:
-            raise NotFound(detail="Error, no given username", code=404)
-        elif not User.objects.filter(username=username).exists():
         """
         View joinable teams
         """
+        username = verify_user_token(self.request)
+        try:
+            User.objects.get(username=username)
+        except:
             raise NotFound(detail="Error, invalid username", code=404)
         
+        # Exclude teams the user is not already in
         exclude_list = Relationship.objects.filter(user__username=username, status_id=1).values_list('team_id')
 
         return Team.objects.filter(private=False).exclude(id__in=exclude_list)
@@ -103,8 +105,14 @@ class TeamView(viewsets.ModelViewSet):
         Create, edit, or delete a team
         """
         method = request.query_params.get("method")
-        if method and str(method).lower() == "edit":
+        username = verify_user_token(self.request)
+        if ((str(method).lower() == "edit") or str(method).lower() == "delete"):
             team = Team.objects.get(id=request.data["id"])
+            role = get_role_of_user_in_team(username, team.id)
+
+        if method and str(method).lower() == "edit": # Edit a team
+            has_permitted_role(role, ["Owner", "Co-Owner"])
+
             team.name = request.data["name"]
             team.description = request.data["description"]
             if request.data.get("private"):
@@ -113,12 +121,12 @@ class TeamView(viewsets.ModelViewSet):
                 team.private = False
             team.save()
             return JsonResponse(data={"message": "success"}, status=200)
-        elif method and str(method).lower() == "delete":
-            team = Team.objects.get(id=request.data["id"])
+        elif method and str(method).lower() == "delete": # Delete a team
+            has_permitted_role(role, ["Owner", "Co-Owner"])
+
             team.delete()
             return JsonResponse(data={"message": "success"}, status=200)
-        else:
-            #Create Team
+        else: # Create Team
             team_data = request.data.dict()
             if team_data.get("private") is not None:
                 if team_data["private"] == "on":
@@ -134,13 +142,11 @@ class TeamView(viewsets.ModelViewSet):
             else:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
-            #Add Team Owner
-            #Check if username exists
-            if not User.objects.filter(username=request.data["username"]).exists():
-                raise NotFound(detail="Error, invalid username", code=404)
-            
+            # Add Team Owner
+            # We do not need to check if a user with that username exists because
+            # that is done in the verify_user_token utility function anyways.
             owner_data = {
-                "user": User.objects.get(username=request.data["username"]),
+                "user": User.objects.get(username=username),
                 "team": Team.objects.get(name=serializer.data["name"]),
                 "role": Role.objects.get(role="Owner"),
                 "status": Status.objects.get(status="Active")
