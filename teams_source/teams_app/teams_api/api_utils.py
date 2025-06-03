@@ -37,3 +37,20 @@ def verify_user_token(request:HttpRequest):
     user = User.objects.get(id=user_token.user_id)
 
     return user.username
+
+def get_role_of_user_in_team(username, team_id):
+    try:
+        role = Role.objects.get(team_role__user__username=username, team_role__team_id=team_id).role
+    except:
+        raise PermissionDenied("User (Username: " + username + ") is not in the team (Team ID: " + str(team_id) + ")")
+
+    return role
+
+def has_permitted_role(role, permitted_roles):
+    """
+    Throws error if the user does not have permission.
+    """
+    if (role not in permitted_roles):
+        raise PermissionDenied("User does not have a permitted role (" + " ".join(permitted_roles) + ").")
+    else:
+        return True
