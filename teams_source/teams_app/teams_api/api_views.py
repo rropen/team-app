@@ -15,9 +15,16 @@ from django.shortcuts import get_object_or_404
 from rest_framework_api_key.permissions import HasAPIKey
 
 class MembersTeamViewSet(viewsets.ModelViewSet):
+    """
+    API View that compiles a list of data about team members of a particular team.
+
+    On the Absence Planner, this is needed for the edit team page and specific team calendar ("view team") page.
+
+    This is accessible to any authenticated users.
+    """
 
     serializer_class = AdditionalTeam
-    permission_classes = [HasAPIKey]
+    permission_classes = [permissions.AllowAny, HasAPIKey]
 
     def get_queryset(self):
         team = self.request.query_params.get("team")
@@ -162,6 +169,11 @@ class TeamView(viewsets.ModelViewSet):
         return JsonResponse(data={"error": "Invalid method"}, status=404)
 
 class JoinableTeams(viewsets.ModelViewSet):
+    """
+    API view that queries for teams the user is not already in.
+
+    This is not used for anything in particular in Absence Planner.
+    """
 
     serializer_class = TeamSerializer
     permission_classes = [permissions.AllowAny, HasAPIKey]
@@ -177,21 +189,33 @@ class JoinableTeams(viewsets.ModelViewSet):
 
 
 class ManageTeam(viewsets.ModelViewSet):
+    """
+    API View used for allowing members to leave, join, and favourite teams.
+
+    On the Absence Planner, these are used for various pages.
+
+    Only authenticated users who "own" that data (e.g., a team member can only
+    leave team for themselves) can use these methods. You cannot perform an action
+    in another users name without validating the user token / username first.
+    """
 
     serializer_class = RelationshipSerializer
-    permission_classes = [permissions.AllowAny, HasAPIKey]
+    permission_classes = [HasAPIKey]
 
     def create(self, request:HttpRequest):
+        username = verify_user_token(request)
         method = request.query_params.get("method")
         if not method:
             return JsonResponse(data={"error": "Invalid Method (Join, Leave)"}, status=404)
 
+        team_id = request.data["team"]
+
         if str(method).lower() == "join":
-            if not request.data.get("username") or not request.data.get("team"):
-                return JsonResponse(data={"error": "Username or Team ID not provided"}, status=404)
+            if not request.data.get("team"):
+                return JsonResponse(data={"error": "Team ID not provided"}, status=404)
             team_data = {
-                "user": User.objects.get(username=request.data["username"]),
-                "team": Team.objects.get(id=request.data["team"]),
+                "user": User.objects.get(username=username),
+                "team": Team.objects.get(id=team_id),
                 "role": Role.objects.get(role="Member"),
                 "status": Status.objects.get(status="Active")
             }
@@ -203,7 +227,7 @@ class ManageTeam(viewsets.ModelViewSet):
             return JsonResponse(data={"message": "success"}, status=200)
         
         elif str(method).lower() == "leave":
-            rel = Relationship.objects.filter(user__username=request.data["username"], team__id=request.data["team"], status=Status.objects.get(status="Active"))
+            rel = Relationship.objects.filter(user__username=username, team__id=team_id, status=Status.objects.get(status="Active"))
             if not rel.exists():
                 return JsonResponse(data={"error": "Relationship not found"} ,status=404)
             
@@ -211,15 +235,12 @@ class ManageTeam(viewsets.ModelViewSet):
             return JsonResponse(data={"message": "success"}, status=200)
 
         elif str(method).lower() == "favourite":
-            rel = Relationship.objects.filter(user__username=request.data["username"], team__id=request.data["team"], status=Status.objects.get(status="Active"))
+            rel = Relationship.objects.filter(user__username=username, team__id=team_id, status=Status.objects.get(status="Active"))
             if not rel.exists():
                 return JsonResponse(data={"error": "Relationship not found"} ,status=404)
             
             teamRel:Relationship = rel[0]
-            if teamRel.favourite:
-                teamRel.favourite = False
-            else:
-                teamRel.favourite = True
+            teamRel.favourite = not teamRel.favourite # Toggle the favourite value
 
             teamRel.save(force_update=True)
             return JsonResponse(data={"message": "success"}, status=200)
@@ -249,10 +270,6 @@ class CheckUserExists(viewsets.ViewSet):
 
     def list(self, request):
         username = self.request.query_params.get("username")
-        try:
-            teams_permission_check(self.request, username)
-        except:
-            return Response(status=403)
 
         try:
             User.objects.get(username=username)
