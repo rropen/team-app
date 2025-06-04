@@ -5,7 +5,6 @@ from teams_app.teams_api.api_views import *
 router = routers.DefaultRouter()
 
 #JC - Register api links
-#router.register(r'teams', UserTeamViewSet, basename="teams")
 router.register(r'members', MembersTeamViewSet, basename="members")
 router.register(r'user/teams', AllUserTeamsViewSet, basename="users_teams")
 router.register(r'teams', TeamView, basename="creator")
