@@ -1,5 +1,7 @@
 DEBUG=True
 PRODUCTION_UI=False
+PROFILING=False
+
 DB_NAME = ""
 DB_USER = ""
 DB_PASSWORD = ""

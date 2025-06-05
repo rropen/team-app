@@ -187,3 +187,16 @@ VERSION = "1.0.0"
 LOGIN_URL = "/login"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+PROFILING_ENV = os.getenv("PROFILING")
+PROFILING = PROFILING_ENV is not None and PROFILING_ENV.lower() == "true"
+
+# Allows the debug toolbar to be shown
+if PROFILING:
+    MIDDLEWARE += [
+        "silk.middleware.SilkyMiddleware",
+    ]
+
+    INSTALLED_APPS += [
+        "silk",
+    ]
