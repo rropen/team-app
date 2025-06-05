@@ -19,6 +19,11 @@ from django.urls import path, include
 import teams_app.views as views
 from teams_app.teams_api.api_urls import router
 
+from os import getenv
+
+PROFILING_ENV = getenv("PROFILING")
+PROFILING = PROFILING_ENV is not None and PROFILING_ENV.lower() == "true"
+
 urlpatterns = [
     path('', views.home_page_view, name="home_page"),
     path('login', views.login_page_view, name="login_page"),
@@ -33,3 +38,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("api/", include(router.urls))
 ]
+
+# This allows django-silk to be used to interrupt API requests and measure their performance
+if PROFILING:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
