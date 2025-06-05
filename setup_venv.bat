@@ -48,6 +48,9 @@ if EXIST teams_source/manage.py (
     ECHO Running migrations
 	"venv\Scripts\python" teams_source/manage.py migrate
 
+    ECHO Creating cache table
+    "venv\Scripts\python" ap_src/manage.py createcachetable
+
     ECHO Loading fixtures
 
     @REM LOOP through all fixtures in the fixtures folder in a for loop and load them one by one

@@ -36,6 +36,9 @@ if [ -f "teams_source/manage.py" ]; then
   echo "Running migrations"
   python teams_source/manage.py migrate
 
+  echo "Creating cache table"
+  python ap_src/manage.py createcachetable
+
   echo "Loading fixtures"
   for f in teams_source/teams_app/fixtures/*.*; do
     echo "Loading fixture $f"
