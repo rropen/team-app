@@ -27,6 +27,10 @@ class TeamSerializer(serializers.ModelSerializer):
         model = Team
         fields = ["id", "name", "description", "notes", "private", "count", "origin_application"]
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["first_name", "last_name", "email"]
 
 #JC - Serializer for api/teams
 class UsersTeamsSerializer(serializers.ModelSerializer):
