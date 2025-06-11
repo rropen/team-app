@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from teams_app.models import Relationship, Team, Role, Status
 from teams_app.teams_api.api_utils import verify_user_token, get_role_of_user_in_team, has_permitted_role
-from .api_serializer import UsersTeamsSerializer, AdditionalTeam, TeamSerializer, RelationshipSerializer
-from rest_framework.exceptions import NotFound, AuthenticationFailed, PermissionDenied
+from .api_serializer import UsersTeamsSerializer, AdditionalTeam, TeamSerializer, RelationshipSerializer, UserSerializer
+from rest_framework.exceptions import NotFound, AuthenticationFailed, PermissionDenied, ValidationError
 from django.db.models.functions import Lower
 from rest_framework import permissions 
 from django.contrib.auth.models import User
@@ -277,3 +277,69 @@ class CheckUserExists(viewsets.ViewSet):
             return Response(False, status=200)
         
         return Response(True, status=200)
+
+class UserView(viewsets.ModelViewSet):
+    """
+    A general-purpose API View for CRUD operations on user's data. Permissions are validated
+    with the username derived from the user token in the request header.
+
+    CRUD operations as used in the Absence Planner include:
+        - Read
+            Fetching the first name, last name, and email address
+                - Authenticated Users
+        - Update
+            - Changing the First Name
+                - Authenticated Users
+            - Changing the Last Name
+                - Authenticated Users
+            - Changing the Email Address
+                - Authenticated Users
+    """
+
+    serializer_class = UserSerializer
+    permission_classes = [HasAPIKey]
+
+    def get_queryset(self):
+        """
+        Get First Name, Last Name, and Email Address of a user
+        """
+        username = verify_user_token(self.request)
+        try:
+            user = User.objects.filter(username=username)
+        except Exception as exception:
+            raise NotFound(detail="Error, invalid username. Exception: " + str(exception), code=404)
+        
+        return user
+    
+    def create(self, request:HttpRequest):
+        """
+        Edit the First Name, Last Name, or Email Address of a user
+        """
+        # Get user object using token from request headers
+        username = verify_user_token(self.request)
+        try:
+            user = User.objects.get(username=username)
+        except Exception as exception:
+            raise NotFound(detail="Error, invalid username. Exception: " + str(exception), code=404)
+
+        email = request.POST.get("email")
+        first_name = request.POST.get("first_name")
+        last_name = request.POST.get("last_name")
+        
+        if (not (email or first_name or last_name)):
+            raise ValidationError(
+                detail={
+                    "error": "You must provide an email, first name, or last name to update one or more of those fields"
+                },
+                code=400
+            )
+        if (email):
+            user.email = email
+        if (first_name):
+            user.first_name = first_name
+        if (last_name):
+            user.last_name = last_name
+
+        user.save()
+
+        return JsonResponse(data={"message": "success"}, status=200)

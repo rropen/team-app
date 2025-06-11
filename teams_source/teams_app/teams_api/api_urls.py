@@ -12,6 +12,7 @@ router.register(r'joinable', api_views.JoinableTeams, basename="joinable")
 router.register(r'manage', api_views.ManageTeam, basename="manage")
 router.register(r'status_check', api_views.StatusCheck, basename="manage")
 router.register(r'user_exists', api_views.CheckUserExists, basename="user_exists")
+router.register(r'user', api_views.UserView, basename="user")
 
 urlpatterns = [
     path('', include(router.urls)),
