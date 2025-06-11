@@ -303,6 +303,7 @@ class UserView(viewsets.ModelViewSet):
         """
         Get First Name, Last Name, and Email Address of a user
         """
+        
         username = verify_user_token(self.request)
         try:
             user = User.objects.filter(username=username)
@@ -315,6 +316,7 @@ class UserView(viewsets.ModelViewSet):
         """
         Edit the First Name, Last Name, or Email Address of a user
         """
+
         # Get user object using token from request headers
         username = verify_user_token(self.request)
         try:
