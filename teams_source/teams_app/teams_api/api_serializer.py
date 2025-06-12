@@ -14,7 +14,7 @@ class UserSerializerAddon(serializers.ModelSerializer):
     role_info = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ["id", "username", "first_name", "last_name", "email", "role_info"]
+        fields = ["id", "username", "first_name", "last_name", "role_info"]
 
     def get_role_info(self, obj):
         serializer = RoleSerializer(Relationship.objects.get(user=obj, status=1, team=self.root.instance[0]).role)

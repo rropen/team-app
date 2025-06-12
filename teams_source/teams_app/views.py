@@ -218,9 +218,7 @@ def profile(request):
         if request.POST.get("lastName") != "" and request.POST.get("lastName") != request.user.last_name:
             request.user.last_name = request.POST.get("lastName")
             request.user.save()
-        if request.POST.get("email") != request.user.email:
-            request.user.email = request.POST.get("email")
-            request.user.save()        
+         
 
         region = request.POST.get("region")
         region_code = pycountry.countries.get(name=region).alpha_2
