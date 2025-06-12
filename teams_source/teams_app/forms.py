@@ -14,7 +14,7 @@ class LoginForm(forms.Form):
 class RegisterForm(UserCreationForm):
     class Meta:
         model=User
-        fields = ['username', 'password1', 'password2']
+        fields = ['username', 'email', 'password1', 'password2']
 
 #JC - Form to add a team to the database using the Team model
 class CreateTeamForm(forms.ModelForm):

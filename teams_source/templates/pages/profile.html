@@ -32,6 +32,19 @@
                                 </div>
                             </div>
                             <div class="field">
+                                <label class="label">Email</label>
+                                <div class="control has-icons-right">
+                                    {% if user.email %}
+                                    <input class="input is-rounded is-success" type="email" placeholder="Email Address" name="email" id="email-input" value="{{ user.email }}">
+                                    <span class="icon is-small is-right">
+                                        <button class="delete" aria-label="delete" onclick="deleteInputtedValue('email-input')"></button>
+                                    </span>
+                                    {% else %}
+                                    <input class="input is-rounded is-warning" type="email" placeholder="Email Address" name="email">
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="field">
                                 <label class="label">Region</label>
                                 <div class="control">
                                     <div class="select is-rounded">
