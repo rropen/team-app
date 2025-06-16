@@ -45,7 +45,7 @@ if [ -f "teams_source/manage.py" ]; then
     python teams_source/manage.py loaddata "$f"
   done
 
-  if [! -f "venv/user_created" ]; then
+  if [ ! -f "venv/user_created" ]; then
     echo
     echo "Create an admin user"
     touch venv/user_created
