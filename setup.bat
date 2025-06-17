@@ -49,7 +49,7 @@ if EXIST teams_source/manage.py (
 	"venv\Scripts\python" teams_source/manage.py migrate
 
     ECHO Creating cache table
-    "venv\Scripts\python" ap_src/manage.py createcachetable
+    "venv\Scripts\python" teams_source/manage.py createcachetable
 
     ECHO Loading fixtures
 
