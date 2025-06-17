@@ -21,5 +21,26 @@ Project to separate the _Team Creation_ functionality from [absence-planner](htt
 
 Contact [Oli Rowan](mailto:Oli.Rowan@Rolls-Royce.com) if you have any questions or want help adapting this for another situation.
 
+## Usage
 
+This project is just starting, will be a django web app with Javascript/jQuery on the front end, and Bulma.io CSS
 
+## Developer Guide
+
+To get started with the Absence Planner and the Team App, we have a [developer guide](DEVELOPER.md).
+
+## Contribution
+
+To contribute changes to the original respository, the following commands can be used:
+
+- git remote add upstream ORIGINAL_REPOSITORY_URL
+
+- git merge upstream/master git fetch upstream
+
+- git merge upstream/master
+
+- git push origin master
+
+## Colour Schemes
+
+- Options for modifying colour schemes can be found in the profile settings page, under the "App Information" category. Different colours can be picked for altering Bank Holidays and Weekends. A dropdown list within the same container can be modified to choose whether these specific dates are shown on the calendar. The rectangular bar can be selected to show a colour picker where a specific colour can be chosen, after these changes have been made they can be confirmed by clicking on the "Submit" button to apply them.
