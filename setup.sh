@@ -1,64 +1,78 @@
 #!/bin/bash
 
-PYTHON_EXECUTABLE="notfound"
+echo "============================================================"
+echo "Setting Up Django Project Environment"
+echo "This script will make a new venv and install the requirements, then start the Django Project"
+echo "This project is tested on Python 3.8. It may not work on other versions"
+echo "If this script does not work, you will need to start django manually. This script is only a helper to make it easier to start the project."
+echo "Please follow the instructions in the README.txt file to start the project if you need to."
+echo "============================================================"
 
-if command -v python3 &>/dev/null; then
-  PYTHON_EXECUTABLE="python3"
-  echo "Using python command: $PYTHON_EXECUTABLE"
+
+# alias UV temporarily so we can get the path to it without restarting the terminal session
+uv_temporary_path="$HOME/.local/bin/uv"
+echo "$uv_temporary_path"
+
+# Install UV for faster package management
+if ! type "$uv_temporary_path" > /dev/null; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
 else
-  echo "Couldn't find a valid python command, please install python 3.8 or higher."
-  exit 1
+    echo "uv command found"
+    $uv_temporary_path --version
 fi
 
-if [ ! -f "venv/bin/activate" ]; then
-  echo "Creating venv ... This may take a while"
-  $PYTHON_EXECUTABLE -m venv venv
+if [ ! -f ".venv/bin/activate" ]; then
+    echo "Creating venv ... This may take a while"
+    $uv_temporary_path venv .venv
 fi
 
-if [ ! -f "venv/req_installed" ]; then
-  echo "Installing requirements"
-  source venv/bin/activate
-  python -m pip install --upgrade pip
-  python -m pip install -r requirements.txt
-  touch venv/req_installed
-  deactivate
-else
-  echo "Requirements are already installed"
+if [ ! -f ".env" ]; then
+    cp "example_env.txt" ".env"
 fi
 
-cp example_env.txt .env
+echo "Installing requirements"
+$uv_temporary_path pip install -r pyproject.toml --all-extras
 
 if [ -f "teams_source/manage.py" ]; then
-  echo "Making migrations"
-  source venv/bin/activate
-  python teams_source/manage.py makemigrations
+    echo "Making migrations"
+    ./.venv/bin/python teams_source/manage.py makemigrations
 
-  echo "Running migrations"
-  python teams_source/manage.py migrate
+    echo "Running migrations"
+    ./.venv/bin/python teams_source/manage.py migrate ap_app
+    ./.venv/bin/python teams_source/manage.py migrate
 
-  echo "Creating cache table"
-  python ap_src/manage.py createcachetable
+    echo "Creating cache table"
+    ./.venv/bin/python teams_source/manage.py createcachetable
 
-  echo "Loading fixtures"
-  for f in teams_source/teams_app/fixtures/*.*; do
-    echo "Loading fixture $f"
-    python teams_source/manage.py loaddata "$f"
-  done
+    echo "Loading fixtures"
+    for f in teams_source/ap_app/fixtures/*.*; do
+        echo "Loading fixture $f"
+        ./.venv/bin/python teams_source/manage.py loaddata "$f"
+    done
 
-  if [ ! -f "venv/user_created" ]; then
-    echo
-    echo "Create an admin user"
-    touch venv/user_created
-    python teams_source/manage.py createsuperuser
-  else
-    echo "Super User already created"
-  fi
+    if [ ! -f ".venv/user_created" ]; then
+        echo "----------------------------------------------------------------------------------------------------"
+        echo "----------------------------------------------------------------------------------------------------"
+        echo "Please create an admin user and password. You will need to use this to sign in to the admin panel."
+        echo "Please do not use a real password; this is a development environment."
+        echo "Create an admin user"
 
-  # Uncomment the following lines if you want to collect static files
-  # echo "Collecting static files"
-  # python teams_source/manage.py collectstatic --noinput
+        touch .venv/user_created
+        python teams_source/manage.py createsuperuser
+    else
+        echo "Super User already created"
+    fi
 
-  echo "This process has successfully finished"
-  echo "Don't forget to activate virtual environment before running manage.py"
-  deactivate
+    # Uncomment to collect static files
+    # echo "Collecting static files"
+    # python teams_source/manage.py collectstatic --noinput
+
+    echo "Done"
+    echo "Run the web server with:"
+    echo "uv run .\teams_source\manage.py runserver"
+    echo "Please note that if this is your first time installing uv you may have to restart vscode"
+    echo "Alternatively, activate the virtual environment:"
+    echo ".\.venv\Scripts\activate"
+    echo "And then run the web server with:"
+    echo "python teams_source\manage.py runserver"
 fi
