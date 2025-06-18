@@ -38,14 +38,14 @@ if [ -f "teams_source/manage.py" ]; then
     ./.venv/bin/python teams_source/manage.py makemigrations
 
     echo "Running migrations"
-    ./.venv/bin/python teams_source/manage.py migrate ap_app
+    ./.venv/bin/python teams_source/manage.py migrate teams_app
     ./.venv/bin/python teams_source/manage.py migrate
 
     echo "Creating cache table"
     ./.venv/bin/python teams_source/manage.py createcachetable
 
     echo "Loading fixtures"
-    for f in teams_source/ap_app/fixtures/*.*; do
+    for f in teams_source/teams_app/fixtures/*.*; do
         echo "Loading fixture $f"
         ./.venv/bin/python teams_source/manage.py loaddata "$f"
     done

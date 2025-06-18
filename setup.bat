@@ -44,7 +44,7 @@ if EXIST teams_source/manage.py (
 	".venv\Scripts\python" teams_source/manage.py makemigrations
 
     ECHO Running migrations
-	".venv\Scripts\python" teams_source/manage.py migrate ap_app
+	".venv\Scripts\python" teams_source/manage.py migrate teams_app
 	".venv\Scripts\python" teams_source/manage.py migrate
 
     ECHO Creating cache table
@@ -53,7 +53,7 @@ if EXIST teams_source/manage.py (
     ECHO Loading fixtures
 
     @REM LOOP through all fixtures in the fixtures folder in a for loop and load them one by one
-    for %%f in (teams_source\ap_app\fixtures\*.*) do (
+    for %%f in (teams_source\teams_app\fixtures\*.*) do (
         ECHO Loading fixture %%f
         ".venv\Scripts\python" teams_source/manage.py loaddata %%f
     )
