@@ -14,7 +14,6 @@ dependencies = [
   "django-filter==23.3",
   "djangorestframework==3.14.0",
   "djangorestframework-api-key==3.1.0",
-  "django-silk[formatting]==5.4.0",
   "holidays==0.35",
   "idna==3.7",
   "pycountry==22.3.5",
@@ -30,7 +29,10 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ruff>=0.11.5"]
+dev = [
+  "django-silk[formatting]==5.4.0",
+  "ruff>=0.11.5",
+]
 
 [tool.uv]
 package = false
