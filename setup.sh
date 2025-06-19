@@ -67,6 +67,9 @@ if [ -f "teams_source/manage.py" ]; then
     # echo "Collecting static files"
     # python teams_source/manage.py collectstatic --noinput
 
+    ECHO Installing pre-commit hooks into `.git` for safer development
+    %uv_temporary_path% run pre-commit install
+
     echo "Done"
     echo "Run the web server with:"
     echo "uv run .\teams_source\manage.py runserver"
