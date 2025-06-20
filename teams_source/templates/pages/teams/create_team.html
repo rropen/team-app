@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load bulma_tags %}
+{% load static %}
+{% block title %}Create Team{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-8">
+                        <form method="POST" action="create_team" class="box">
+                            <h1 class="title">Create a Team</h1>
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="field">
+                                    <label class="label" for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                                    {% if field.name == "name" %}
+                                        {% if field.value == None %}
+                                        <input class="input" type="{{ field.field.widget.input_type }}" name="{{ field.name }}" required id="{{ field.id_for_label }}" autofocus>
+                                        {% else %}
+                                        <input class="input" type="{{ field.field.widget.input_type }}" name="{{ field.name }}" required id="{{ field.id_for_label }}" value="{{ field.value }}">
+                                        {% endif %}
+                                    {% elif field.name == "description" %}
+                                        {% if field.value == None %}
+                                        <textarea class="textarea" name="{{ field.name }}" id="{{ field.id_for_label }}"></textarea>
+                                        {% else %}
+                                        <textarea class="textarea" name="{{ field.name }}" id="{{ field.id_for_label }}" value="{{ field.value }}"></textarea>
+                                        {% endif %}
+                                    {% elif field.name == "private" %}
+                                        <label class="checkbox">
+                                            <input type="checkbox" name="{{ field.name }}" id="{{ field.id_for_label }}">
+                                            Private team
+                                        </label>
+                                    {% elif field.name == "origin_application" %}
+                                        <input class="input" type="hidden" name="{{ field.name }}" required id="{{ field.id_for_label }}" value="Team App">
+                                    {% endif %}
+                                </div>
+                                {% if field.errors %}
+                                <ul class="errorlist">
+                                    {% for error in field.errors %}
+                                    <li style="color: red">{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="field">
+                                 <h2 class="description"><i class="fas fa-info-circle"></i> <b>Please avoid using personal information in the description as it will be seen by non team members.<b></h2>
+                                <button class="button is-info">Create Team</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

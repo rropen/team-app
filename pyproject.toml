@@ -1,0 +1,51 @@
+[project]
+name = "absense-planner"
+description = "Python based absense-planner project built primarily by UK T-Level students."
+readme = "README.md"
+requires-python = "==3.11.9"
+version = "0.0.1"
+dependencies = [
+  "asgiref==3.7.2",
+  "certifi==2024.2.2",
+  "charset-normalizer==3.3.2",
+  "Django==4.2.6",
+  "django-bulma==0.8.3",
+  "django-cors-headers==4.3.1",
+  "django-filter==23.3",
+  "djangorestframework==3.14.0",
+  "djangorestframework-api-key==3.1.0",
+  "holidays==0.35",
+  "idna==3.7",
+  "pycountry==22.3.5",
+  "python-dateutil==2.8.2",
+  "python-dotenv==1.0.1",
+  "pytz==2023.3.post1",
+  "requests==2.31.0",
+  "six==1.16.0",
+  "sqlparse==0.4.4",
+  "typing_extensions==4.8.0",
+  "tzdata==2023.3",
+  "urllib3==2.2.1",
+]
+
+[dependency-groups]
+dev = [
+  "commitizen",
+  "django-silk[formatting]==5.4.0",
+  "djhtml",
+  "pre-commit",
+  "ruff>=0.11.5",
+]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version_scheme = "pep440"
+version_provider = "uv"
+update_changelog_on_bump = true
+major_version_zero = true

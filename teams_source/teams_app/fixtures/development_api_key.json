@@ -1,0 +1,12 @@
+[
+  {
+    "model": "rest_framework_api_key.apikey",
+    "fields": {
+      "created": "2025-06-02 08:55:21.669454Z",
+      "name": "Absence Planner Development API Key",
+      "hashed_key": "sha512$$019ae2efed11427d0350818e5d5215b606144bada83e583b04f0a44ad19861d7419681c4022aa52ac650cdd4304392b71c5b022b7a07981bffb882181f4e8bc7",
+      "prefix": "amAaQwQ0",
+      "id": "amAaQwQ0.sha512$$019ae2efed11427d0350818e5d5215b606144bada83e583b04f0a44ad19861d7419681c4022aa52ac650cdd4304392b71c5b022b7a07981bffb882181f4e8bc7"
+    }
+  }
+]

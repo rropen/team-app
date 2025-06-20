@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% load bulma_tags %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="title is-3">Welcome, {{ request.user.username }}</h1>
+</div>
+{% endblock %}

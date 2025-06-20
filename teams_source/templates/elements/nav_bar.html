@@ -1,0 +1,103 @@
+{% load bulma_tags %}
+{% load static %}
+{% load define_action %}
+{% block content %}
+    {% get_primary PRODUCTION_UI as primary %}
+    {% get_secondary PRODUCTION_UI as secondary %}
+
+    <section class="hero {{primary}}">
+        <div class="hero-body ">
+            <p class="title {{primary}}">{{ NAME }}</p>
+            <p class="subtitle rr-white">{{ VERSION }}</p>
+        </div>
+    </section>
+
+    <nav class="navbar {{secondary}}">
+        <div class="navbar-menu">
+            <div class="navbar-start pl-6">
+                {% if user.is_authenticated %}
+                    {% if home_active %}
+                    <a class="navbar-item icon-text active" href="/">
+                    {% else %}
+                    <a class="navbar-item icon-text" href="/">
+                    {% endif %}
+                        <span class="icon is-size-5">
+                            <i class="fas fa-home"></i>
+                        </span>
+                        <span>Home</span>
+                    </a>
+
+                    {% if viewer_active %}
+                    <a class="navbar-item icon-text active" href="/teams">
+                    {% else %}
+                    <a class="navbar-item icon-text" href="/teams">
+                    {% endif %}
+                        <span class="icon is-size-5">
+                            <i class="fas fa-users"></i>
+                        </span>
+                        <span>Teams</span>
+                    </a>
+
+                    {% if creation_active %}
+                    <a class="navbar-item icon-text active" href="/create_team">
+                    {% else %}
+                    <a class="navbar-item icon-text" href="/create_team">
+                    {% endif %}
+                        <span class="icon is-size-5">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span>Create Team</span>
+                    </a>
+
+                    {% comment %} {% if management_active %}
+                    <a class="navbar-item icon-text active" href="/team_management">
+                    {% else %}
+                    <a class="navbar-item icon-text" href="/team_management">
+                    {% endif %}
+                        <span class="icon is-size-5">
+                            <i class="fas fa-users-cog"></i>
+                        </span>
+                        <span>Manage Teams</span>
+                    </a> {% endcomment %}
+
+                    {% if documentation_active %}
+                    <a class="navbar-item icon-text active" href="/documentation">
+                    {% else %}
+                    <a class="navbar-item icon-text" href="/documentation">
+                    {% endif %}
+                        <span class="icon is-size-5">
+                            <i class="fas fa-file-alt"></i>
+                        </span>
+                        <span>Documentation</span>
+                    </a>
+
+                {% else %}
+                    <a class="navbar-item icon-text active" href="/">
+                        <span class="icon is-size-5">
+                            <i class="fas fa-home"></i>
+                        </span>
+                        <span>Home</span>
+                    </a>
+                {% endif %}
+            </div>
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="field is-grouped">
+                        <div class="buttons">
+                            {% if user.is_authenticated %}
+                                <a id="profile" href="" class="button is-info">{{request.user.username}}
+                                    <i class="fas fa-user-circle ml-2 is-size-5"></i>
+                                </a>
+                                <a id="logout" href="{% url 'logout' %}" class="button is-light">Log out</a>
+                            {% else %}
+                                <a id="signup" href="/signup" class="button is-info"><strong>Sign up</strong></a>
+                                <a id="login" href="/login" class="button is-light">Log in</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+{% endblock %}

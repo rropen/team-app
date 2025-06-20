@@ -1,0 +1,62 @@
+from django import forms
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from .models import Team
+
+from difflib import SequenceMatcher
+
+#JC - Form for the user to login
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=65)
+    password = forms.CharField(max_length=65, widget=forms.PasswordInput)
+
+#JC - Form for the user to register
+class RegisterForm(UserCreationForm):
+    class Meta:
+        model=User
+        fields = ['username', 'password1', 'password2']
+
+#JC - Form to add a team to the database using the Team model
+class CreateTeamForm(forms.ModelForm):
+
+    class Meta:
+        model = Team
+        fields = ["name", "description", "private", "origin_application"]
+    
+    #JC - Requirements for the team name
+    name = forms.CharField(
+        min_length=3,
+        max_length=64,
+        required=True
+    )
+
+    #JC - Description field
+    description = forms.CharField(
+        max_length=512,
+        required=True
+    )
+
+    #JC - Private field
+    private = forms.BooleanField(
+        required=False
+    )
+
+    # Fill in the application that created team for data collection purposes
+    origin_application = forms.CharField(
+        required=False,
+        max_length=128,
+        widget=forms.HiddenInput(),
+        label=""
+    )
+
+    def clean(self):
+        cleaned_data = super(CreateTeamForm, self).clean()
+        team_name = cleaned_data.get('name')
+        teams = Team.objects.all()
+        error_set = False
+        for team in teams:
+            similarity = SequenceMatcher(None, team_name, team.name).ratio()
+            if team.name.lower() == team_name.lower() or similarity >= 0.9 and not error_set:
+                self.add_error('name', 'This name is to similar to an existing team name.')
+                error_set = True
+        return cleaned_data
