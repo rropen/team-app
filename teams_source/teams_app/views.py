@@ -101,7 +101,7 @@ def focus_team_view(request, team_id):
             data = json.loads(request.body)
         except Exception as exception:
             data = None
-        if data != None:
+        if data is not None:
             if data["type"] == "remove":
                 rel = Relationship.objects.filter(user_id=data["user_id"], team_id=team_id)
                 rel.delete()
