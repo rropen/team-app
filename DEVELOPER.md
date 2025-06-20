@@ -117,6 +117,8 @@ The `.env` file is stored in the project root and can either be created manually
 ```
 DEBUG=True
 PRODUCTION_UI=False
+PROFILING=False
+
 DB_NAME = ""
 DB_USER = ""
 DB_PASSWORD = ""
@@ -129,21 +131,25 @@ If you change the `.env` file, you should reboot the shell/terminal window in wh
 
 ##### `DEBUG`
 
-[See the Django documentation for more information about the debug setting](https://docs.djangoproject.com/en/5.1/ref/settings/#debug)
+[See the Django documentation for more information about the debug setting.](https://docs.djangoproject.com/en/5.1/ref/settings/#debug)
 
 ##### `PRODUCTION_UI`
 
 Red UI represents a non-production environment
 Blue represents Production.
 
-If you set this to False, it will change the colour of the header in the Absence Planner like this:
+If you set this to False, it will change the colour of the header in the Team App like this:
 
 ![image](https://github.com/user-attachments/assets/49ac875f-ab92-4cc5-bcff-4ae2dd089f67)
 
-If you set this to True, it will change the colour of the header in the Absence Planner like this:
+If you set this to True, it will change the colour of the header in the Team App like this:
 
 ![image](https://github.com/user-attachments/assets/edfd9044-57d0-4e7a-9bc6-8e874df97bee)
 
+##### `PROFILING`
+
+On the Team App, this is for enabling [`django-silk`](https://github.com/jazzband/django-silk) in order to analyse requests whilst interacting with the application on the Absence Planner. This was initially added to investigate slow API requests, but is quite versatile and can be used for many more purposes.
+
 ##### `DB_*` Options
 
-These set the settings that will be used to connect to the absence planner database.
+These set the settings that will be used to connect to the Team App database.
