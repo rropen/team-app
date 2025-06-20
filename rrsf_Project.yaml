@@ -25,6 +25,6 @@ Architecture:
   architectureOverview: |
     This project follows a standard Django development structure.
   fileDescribingArchitecture:
-  fileDescribingDataSchema: 
+  fileDescribingDataSchema:
 BusinessDataClassification:
   exportControlDetails: This application will not contain export controlled data.

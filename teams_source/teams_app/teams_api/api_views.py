@@ -3,15 +3,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from teams_app.models import Relationship, Team, Role, Status
 from teams_app.teams_api.api_utils import verify_user_token, get_role_of_user_in_team, has_permitted_role
-from .api_serializer import UsersTeamsSerializer, AdditionalTeam, TeamSerializer, RelationshipSerializer, UserSerializer
-from rest_framework.exceptions import NotFound, AuthenticationFailed, PermissionDenied, ValidationError
-from django.db.models.functions import Lower
+from .api_serializer import AdditionalTeam, TeamSerializer, RelationshipSerializer, UserSerializer
+from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework import permissions 
 from django.contrib.auth.models import User
-from django.http.response import HttpResponseRedirect, JsonResponse
+from django.http.response import JsonResponse
 from django.http.request import HttpRequest
 from .serializers.teams_list import AllTeamSerializer
-from django.shortcuts import get_object_or_404
 from rest_framework_api_key.permissions import HasAPIKey
 
 class MembersTeamViewSet(viewsets.ModelViewSet):
@@ -99,7 +97,8 @@ class TeamView(viewsets.ModelViewSet):
         username = verify_user_token(self.request)
         try:
             User.objects.get(username=username)
-        except:
+        except Exception as exception:
+            print(exception)
             raise NotFound(detail="Error, invalid username", code=404)
         
         # Exclude teams the user is not already in
@@ -273,7 +272,8 @@ class CheckUserExists(viewsets.ViewSet):
 
         try:
             User.objects.get(username=username)
-        except:
+        except Exception as exception:
+            print(exception)
             return Response(False, status=200)
         
         return Response(True, status=200)

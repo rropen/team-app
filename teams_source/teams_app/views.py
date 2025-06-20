@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.db.models.functions import Lower
 from .forms import LoginForm, RegisterForm, CreateTeamForm
 from .models import Team, Role, Relationship, Status
-import holidays, pycountry
 import json
 
 #JC - Home page view
@@ -98,9 +97,9 @@ def focus_team_view(request, team_id):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-        except:
+        except Exception:
             data = None
-        if data != None:
+        if data is not None:
             if data["type"] == "remove":
                 rel = Relationship.objects.filter(user_id=data["user_id"], team_id=team_id)
                 rel.delete()
@@ -118,7 +117,7 @@ def focus_team_view(request, team_id):
                         current_team.private = True
                     else:
                         current_team.private = False
-                except:
+                except Exception:
                     current_team.private = False
                     
                 current_team.save()
@@ -148,7 +147,8 @@ def focus_team_view(request, team_id):
 
     try:
         team = Team.objects.get(id=team_id)
-    except:
+    except Exception as exception:
+        print(exception)
         return redirect("/teams")
     
     member_list = Relationship.objects.filter(team=team, status=1)
@@ -195,54 +195,6 @@ def create_team_view(request):
 @login_required
 def documentation_view(request):
     return render(request, "pages/documentation.html", {"documentation_active": True})
-
-def profile(request):
-
-    userprofile: UserProfile = UserProfile.objects.filter(user=request.user)
-
-    if not userprofile.exists():
-        userprofile = UserProfile.objects.create(
-            user=request.user,
-            accepted_policy=True,
-            region="GB"
-        )
-        userprofile.save()
-    else:
-        userprofile: UserProfile = UserProfile.objects.get(user=request.user)
-
-
-    if request.method=="POST" and len(request.POST) > 0:
-        if request.POST.get("firstName") != "" and request.POST.get("firstName") != request.user.first_name:
-            request.user.first_name = request.POST.get("firstName")
-            request.user.save()
-        if request.POST.get("lastName") != "" and request.POST.get("lastName") != request.user.last_name:
-            request.user.last_name = request.POST.get("lastName")
-            request.user.save()
-         
-
-        region = request.POST.get("region")
-        region_code = pycountry.countries.get(name=region).alpha_2
-
-        
-
-        if region_code != userprofile.region:
-            userprofile.region = region_code
-            userprofile.save()
-
-    countries = []
-    for country in list(pycountry.countries):
-        try:
-            holidays.country_holidays(country.alpha_2)
-            countries.append(country.name)
-        except:
-            pass
-    
-    countries = sorted(countries)
-
-    country_name = pycountry.countries.get(alpha_2=userprofile.region).name
-
-    context = {"countries":countries, "current_country":country_name}
-    return render(request, "pages/profile.html", context)
 
 def privacycheck(request):
     my_variable = "Hello world"
