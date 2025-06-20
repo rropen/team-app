@@ -42,7 +42,7 @@ def verify_user_token(request:HttpRequest):
 def get_role_of_user_in_team(username, team_id):
     try:
         role = Role.objects.get(team_role__user__username=username, team_role__team_id=team_id).role
-    except Exception as exception:
+    except Exception:
         raise PermissionDenied("User (Username: " + username + ") is not in the team (Team ID: " + str(team_id) + ")")
 
     return role

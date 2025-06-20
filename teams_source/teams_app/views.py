@@ -97,7 +97,7 @@ def focus_team_view(request, team_id):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-        except Exception as exception:
+        except Exception:
             data = None
         if data is not None:
             if data["type"] == "remove":
@@ -117,7 +117,7 @@ def focus_team_view(request, team_id):
                         current_team.private = True
                     else:
                         current_team.private = False
-                except Exception as exception:
+                except Exception:
                     current_team.private = False
                     
                 current_team.save()
@@ -148,6 +148,7 @@ def focus_team_view(request, team_id):
     try:
         team = Team.objects.get(id=team_id)
     except Exception as exception:
+        print(exception)
         return redirect("/teams")
     
     member_list = Relationship.objects.filter(team=team, status=1)

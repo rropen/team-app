@@ -7,7 +7,7 @@ import hashlib
 def create_user_token(sender, instance, **kwargs):
     try:
         UserToken.objects.get(pk=instance.id)
-    except Exception as exception: # Token does not exist so new token should be created
+    except Exception: # Token does not exist so new token should be created
         
         username = str(instance.username).encode() # Get the raw username string from request
         username_hash = hashlib.sha256(username).hexdigest() # Encrypt and get digest value
