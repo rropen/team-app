@@ -17,11 +17,23 @@ User accounts must be created on the Team App first before creating an account o
 
 ## Setup
 
-### Basic
+### Using GNU Make
 
-To start running the application, you need to run the `setup` script:
+This is the simplest way to get the app running, but you need [GNU Make](DEVELOPER.md#gnu-make) as a dependency:
 
-### Windows
+```shell
+make
+```
+
+Then follow the [instructions for running it in the `README`](README.md#running-the-server).
+
+### Using the `setup` Scripts
+
+#### Overview
+
+To start running the application, you need to run the `setup` script, and follow the [instructions for running it in the `README`](README.md#running-the-server).
+
+#### Windows
 
 ```powershell
 .\setup.bat
@@ -33,15 +45,15 @@ If you get an error saying that you are not permitted to run scripts, run the fo
 Set-ExecutionPolicy -Scope CurrentUser Unrestricted
 ```
 
-### MacOS and Linux
+#### MacOS and Linux
 
-```shell
+```sh
 ./setup.sh
 ```
 
 If you get "permission denied", you need to run the following command:
 
-```shell
+```sh
 chmod +x setup.sh
 ```
 
@@ -117,6 +129,8 @@ The `.env` file is stored in the project root and can either be created manually
 ```
 DEBUG=True
 PRODUCTION_UI=False
+PROFILING=False
+
 DB_NAME = ""
 DB_USER = ""
 DB_PASSWORD = ""
@@ -129,21 +143,25 @@ If you change the `.env` file, you should reboot the shell/terminal window in wh
 
 ##### `DEBUG`
 
-[See the Django documentation for more information about the debug setting](https://docs.djangoproject.com/en/5.1/ref/settings/#debug)
+[See the Django documentation for more information about the debug setting.](https://docs.djangoproject.com/en/5.1/ref/settings/#debug)
 
 ##### `PRODUCTION_UI`
 
 Red UI represents a non-production environment
 Blue represents Production.
 
-If you set this to False, it will change the colour of the header in the Absence Planner like this:
+If you set this to False, it will change the colour of the header in the Team App like this:
 
 ![image](https://github.com/user-attachments/assets/49ac875f-ab92-4cc5-bcff-4ae2dd089f67)
 
-If you set this to True, it will change the colour of the header in the Absence Planner like this:
+If you set this to True, it will change the colour of the header in the Team App like this:
 
 ![image](https://github.com/user-attachments/assets/edfd9044-57d0-4e7a-9bc6-8e874df97bee)
 
+##### `PROFILING`
+
+On the Team App, this is for enabling [`django-silk`](https://github.com/jazzband/django-silk) in order to analyse requests whilst interacting with the application on the Absence Planner. This was initially added to investigate slow API requests, but is quite versatile and can be used for many more purposes.
+
 ##### `DB_*` Options
 
-These set the settings that will be used to connect to the absence planner database.
+These set the settings that will be used to connect to the Team App database.
