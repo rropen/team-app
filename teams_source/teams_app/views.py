@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 from django.db.models.functions import Lower
 from .forms import LoginForm, RegisterForm, CreateTeamForm
 from .models import Team, Role, Relationship, Status
-import holidays, pycountry
+import holidays
+import pycountry
 import json
 
 #JC - Home page view
