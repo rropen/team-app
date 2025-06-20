@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 from django.db.models.functions import Lower
 from .forms import LoginForm, RegisterForm, CreateTeamForm
 from .models import Team, Role, Relationship, Status
-import holidays
-import pycountry
 import json
 
 #JC - Home page view
@@ -196,54 +194,6 @@ def create_team_view(request):
 @login_required
 def documentation_view(request):
     return render(request, "pages/documentation.html", {"documentation_active": True})
-
-def profile(request):
-
-    userprofile: UserProfile = UserProfile.objects.filter(user=request.user)
-
-    if not userprofile.exists():
-        userprofile = UserProfile.objects.create(
-            user=request.user,
-            accepted_policy=True,
-            region="GB"
-        )
-        userprofile.save()
-    else:
-        userprofile: UserProfile = UserProfile.objects.get(user=request.user)
-
-
-    if request.method=="POST" and len(request.POST) > 0:
-        if request.POST.get("firstName") != "" and request.POST.get("firstName") != request.user.first_name:
-            request.user.first_name = request.POST.get("firstName")
-            request.user.save()
-        if request.POST.get("lastName") != "" and request.POST.get("lastName") != request.user.last_name:
-            request.user.last_name = request.POST.get("lastName")
-            request.user.save()
-         
-
-        region = request.POST.get("region")
-        region_code = pycountry.countries.get(name=region).alpha_2
-
-        
-
-        if region_code != userprofile.region:
-            userprofile.region = region_code
-            userprofile.save()
-
-    countries = []
-    for country in list(pycountry.countries):
-        try:
-            holidays.country_holidays(country.alpha_2)
-            countries.append(country.name)
-        except Exception as exception:
-            pass
-    
-    countries = sorted(countries)
-
-    country_name = pycountry.countries.get(alpha_2=userprofile.region).name
-
-    context = {"countries":countries, "current_country":country_name}
-    return render(request, "pages/profile.html", context)
 
 def privacycheck(request):
     my_variable = "Hello world"
