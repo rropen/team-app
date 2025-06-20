@@ -2,4 +2,4 @@
 version: v1.25.0
 exclude:
   global:
-    - ap_src/ap_site/settings.py
+    - teams_source/teams_site/settings.py
