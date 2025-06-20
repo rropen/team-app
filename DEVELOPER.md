@@ -11,7 +11,7 @@ To learn more about contributing (e.g., commits, pull requests, etc.), read our 
 
 ## Team App Compatibility
 
-Team App must be running for Absence Planner to work correctly. This is because features of the Absence Planner have a hard dependency on the Team App's API in order to work. 
+Team App must be running for Absence Planner to work correctly. This is because features of the Absence Planner have a hard dependency on the Team App's API in order to work.
 
 User accounts must be created on the Team App first before creating an account on the Absence Planner. Both accounts must have the same username. This is to avoid instability issues and known errors if you do not have a user on both apps with the same name.
 
