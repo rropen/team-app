@@ -27,7 +27,8 @@ def verify_user_token(request:HttpRequest):
     try:
         given_username_hash = request.headers["User-Token"]
         user_token = UserToken.objects.get(username_hash=given_username_hash)
-    except:
+    except Exception as exception:
+        print(exception)
         raise AuthenticationFailed("No User Token Found")
 
     stored_username_hash = user_token.username_hash
@@ -41,7 +42,7 @@ def verify_user_token(request:HttpRequest):
 def get_role_of_user_in_team(username, team_id):
     try:
         role = Role.objects.get(team_role__user__username=username, team_role__team_id=team_id).role
-    except:
+    except Exception as exception:
         raise PermissionDenied("User (Username: " + username + ") is not in the team (Team ID: " + str(team_id) + ")")
 
     return role

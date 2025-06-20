@@ -99,7 +99,7 @@ def focus_team_view(request, team_id):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-        except:
+        except Exception as exception:
             data = None
         if data != None:
             if data["type"] == "remove":
@@ -119,7 +119,7 @@ def focus_team_view(request, team_id):
                         current_team.private = True
                     else:
                         current_team.private = False
-                except:
+                except Exception as exception:
                     current_team.private = False
                     
                 current_team.save()
@@ -149,7 +149,7 @@ def focus_team_view(request, team_id):
 
     try:
         team = Team.objects.get(id=team_id)
-    except:
+    except Exception as exception:
         return redirect("/teams")
     
     member_list = Relationship.objects.filter(team=team, status=1)
@@ -235,7 +235,7 @@ def profile(request):
         try:
             holidays.country_holidays(country.alpha_2)
             countries.append(country.name)
-        except:
+        except Exception as exception:
             pass
     
     countries = sorted(countries)

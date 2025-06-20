@@ -97,7 +97,8 @@ class TeamView(viewsets.ModelViewSet):
         username = verify_user_token(self.request)
         try:
             User.objects.get(username=username)
-        except:
+        except Exception as exception:
+            print(exception)
             raise NotFound(detail="Error, invalid username", code=404)
         
         # Exclude teams the user is not already in
@@ -271,7 +272,8 @@ class CheckUserExists(viewsets.ViewSet):
 
         try:
             User.objects.get(username=username)
-        except:
+        except Exception as exception:
+            print(exception)
             return Response(False, status=200)
         
         return Response(True, status=200)
