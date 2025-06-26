@@ -45,10 +45,17 @@ if [ -f "teams_source/manage.py" ]; then
     ./.venv/bin/python teams_source/manage.py createcachetable
 
     echo "Loading fixtures"
-    for f in teams_source/teams_app/fixtures/*.*; do
-        echo "Loading fixture $f"
-        ./.venv/bin/python teams_source/manage.py loaddata "$f"
-    done
++     shopt -s nullglob
++     fixture_files=(teams_source/teams_app/fixtures/*.*)
++     if [ ${#fixture_files[@]} -gt 0 ]; then
++         for f in "${fixture_files[@]}"; do
++             echo "Loading fixture $f"
++             ./.venv/bin/python teams_source/manage.py loaddata "$f"
++         done
++     else
++         echo "No fixture files found to load."
++     fi
++     shopt -u nullglob
 
     if [ ! -f ".venv/user_created" ]; then
         echo "----------------------------------------------------------------------------------------------------"
@@ -58,7 +65,7 @@ if [ -f "teams_source/manage.py" ]; then
         echo "Create an admin user"
 
         touch .venv/user_created
-        python teams_source/manage.py createsuperuser
+        python ./.venv/bin/python teams_source/manage.py createsuperuser
     else
         echo "Super User already created"
     fi
@@ -75,7 +82,7 @@ if [ -f "teams_source/manage.py" ]; then
     echo "uv run .\teams_source\manage.py runserver"
     echo "Please note that if this is your first time installing uv you may have to restart vscode"
     echo "Alternatively, activate the virtual environment:"
-    echo ".\.venv\Scripts\activate"
+    echo "./.venv/Scripts/activate"
     echo "And then run the web server with:"
-    echo "python teams_source\manage.py runserver"
+    echo "uv run ./teams_source/manage.py runserver"
 fi
